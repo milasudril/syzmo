@@ -1,4 +1,3 @@
-syzmo
+SyZmO
 =====
-
 SYnthesiZer reMOte
