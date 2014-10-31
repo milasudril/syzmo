@@ -14,7 +14,7 @@ SyZmO::Server::Server(const Parameters& params):
 	if(m_params.flags&Parameters::STARTUP_BROADCAST)
 		{
 		socket_out.broadcastEnable();
-		MessageCtrl::ServerStarted msg_startup;
+		MessageCtrl::ServerStartup msg_startup;
 		MessageCtrl msg(msg_startup);
 		socket_out.send(&msg,sizeof(msg),m_params.port_out,"255.255.255.255");
 		socket_out.broadcastDisable();
@@ -36,7 +36,7 @@ int SyZmO::Server::run()
 				socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
 				}
 				break;
-				
+
 			case MessageCtrl::DeviceCountRequest::ID:
 				{
 				MessageCtrl::DeviceCountResponse resp;
@@ -45,7 +45,7 @@ int SyZmO::Server::run()
 				socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
 				}
 				break;
-				
+
 			case MessageCtrl::DeviceNameRequest::ID:
 				{
 				const MessageCtrl::DeviceNameRequest* msg_in

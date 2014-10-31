@@ -43,7 +43,7 @@ namespace SyZmO
 			static const uint32_t ID=1;
 			};
 
-		struct ServerStarted
+		struct ServerStartup
 			{
 			static const uint32_t ID=2;
 			};
