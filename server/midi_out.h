@@ -6,6 +6,7 @@ dependency[midi_out.o]
 #ifndef SYZMO_MIDIOUT_H
 #define SYZMO_MIDIOUT_H
 
+#include "../bridge/message_midi.h"
 #include <cstddef>
 
 namespace SyZmO
@@ -14,8 +15,18 @@ namespace SyZmO
 		{
 		public:
 			static const size_t DEVNAME_LENGTH=32;
-			static unsigned int deviceCount();
+			static uint32_t deviceCount();
 			static void deviceNameGet(unsigned int id,char* name);
+			
+			MidiOut(uint32_t id);
+			~MidiOut();
+			void messageSend(MessageMidi msg_out);
+			
+		private:
+			MidiOut& operator=(const MidiOut&);
+			MidiOut(const MidiOut&);
+		
+			void* handle;
 		};
 	}
 

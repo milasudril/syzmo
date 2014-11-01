@@ -8,10 +8,14 @@ dependency[server.o]
 
 #include "../bridge/inttypes.h"
 #include "../bridge/socket_datagram.h"
+#include "../bridge/message_midi.h"
+
+#include <map>
 
 namespace SyZmO
 	{
 	class SocketDatagram;
+	class Connection;
 
 	class Server
 		{
@@ -29,15 +33,19 @@ namespace SyZmO
 			Server(const Parameters& params);
 			~Server();
 			
+			void midiMessageSend(const char* client,uint32_t dev_id,MessageMidi msg);
+			void deviceCountSend(const char* client);
+			void deviceNameSend(const char* client,uint32_t dev_id);
+			void clientConnect(const char* client,uint32_t dev_id);
+			void clientDisconnect(const char* client,uint32_t dev_id);
+			
 			int run();
-
-		/*	void devcountRequest();
-			void devnameRequest(uint32_t device_id);*/
 
 		private:
 			Parameters m_params;
 			SocketDatagram socket_in;
 			SocketDatagram socket_out;
+			std::map<uint32_t,Connection> connections;
 		};
 	}
 

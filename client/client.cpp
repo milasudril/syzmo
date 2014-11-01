@@ -38,7 +38,7 @@ void SyZmO::Client::deviceCountRequest(const char* server)
 void SyZmO::Client::deviceNameRequest(const char* server,uint32_t id)
 	{
 	SyZmO::MessageCtrl::DeviceNameRequest devreq;
-	devreq.id=id;
+	devreq.device_id=id;
 	SyZmO::MessageCtrl msg_out(devreq);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
@@ -66,11 +66,11 @@ int SyZmO::Client::run()
 					}
 					break;
 				
-				case MessageCtrl::ServerStartup::ID:
+				case MessageCtrl::ServerStartupResponse::ID:
 					running=m_handler->serverStartup(*this,source);
 					break;
 					
-				case MessageCtrl::ServerShutdown::ID:
+				case MessageCtrl::ServerExitResponse::ID:
 					running=m_handler->serverShutdown(*this,source);
 					break;
 
@@ -86,7 +86,8 @@ int SyZmO::Client::run()
 					{
 					const SyZmO::MessageCtrl::DeviceNameResponse* msg_in
 						=(const SyZmO::MessageCtrl::DeviceNameResponse*)msg.data;
-					running=m_handler->deviceAdd(*this,source,msg_in->id,msg_in->name);
+					running=m_handler->deviceAdd(*this,source,msg_in->device_id
+						,msg_in->name);
 					}
 					break;
 				}

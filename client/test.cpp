@@ -49,7 +49,7 @@ class EventHandlerTest:public SyZmO::EventHandler
 		virtual bool deviceAdd(SyZmO::Client& client,const char* server
 			,SyZmO::uint32_t id,const char* device)
 			{
-			printf(" %u %s\n",id,device);
+			printf(" %u. %s\n",id,device);
 			if(id==dev_count-1)
 				{return 0;}
 			return 1;
