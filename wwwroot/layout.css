@@ -1,1 +1,9 @@
-#menu{float:left;border:1px solid;width:128px}
+#menu
+	{
+	float:left;border:1px solid;
+	position:relative;
+	height: -moz-calc(100% - 64px);
+	height: -webkit-calc(100% - 64px);
+	height: calc(100% - 64px);
+	margin:0px;
+	}

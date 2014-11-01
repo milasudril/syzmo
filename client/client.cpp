@@ -3,70 +3,93 @@ target[name[client.o] type[object]]
 #endif
 
 #include "client.h"
+#include "event_handler.h"
 #include "../bridge/message_ctrl.h"
+#include <cstring>
 
-SyZmO::Client::Client(const SyZmO::Client::Parameters& params):
-	m_params(params)
+SyZmO::Client::Client(const SyZmO::Client::Parameters& params,EventHandler& eh):
+	m_params(params),m_handler(&eh)
 	{
 	socket_in.bind(m_params.port_in);
 	MessageCtrl::DeviceCountRequest msg_temp;
 	MessageCtrl msg_out(msg_temp);
-	socket_out.broadcastEnable();
-	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,"255.255.255.255");
-	socket_out.broadcastDisable();
+	if(m_params.flags & Parameters::SERVER_ANY)
+		{
+		socket_out.broadcastEnable();
+		m_handler->clientStartup(*this,"255.255.255.255");
+		socket_out.broadcastDisable();
+		}
+	else
+		{m_handler->clientStartup(*this,m_params.server_ip);}
 	}
 
 SyZmO::Client::~Client()
-	{}
+	{
+	m_handler->clientShutdown(*this,m_params.server_ip);
+	}
 
+void SyZmO::Client::deviceCountRequest(const char* server)
+	{
+	MessageCtrl::DeviceCountRequest msg_temp;
+	MessageCtrl msg_out(msg_temp);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
+
+void SyZmO::Client::deviceNameRequest(const char* server,uint32_t id)
+	{
+	SyZmO::MessageCtrl::DeviceNameRequest devreq;
+	devreq.id=id;
+	SyZmO::MessageCtrl msg_out(devreq);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
+	
 int SyZmO::Client::run()
 	{
 	MessageCtrl msg;
 	char source[SocketDatagram::ADDRBUFF_LENGTH];
-	while(socket_in.receive(&msg,sizeof(msg),source)==sizeof(msg))
+	bool running=1;
+	while(running)
 		{
-		switch(msg.message_type)
+		socket_in.receive(&msg,sizeof(msg),source);
+		
+		if(msg.validIs() 
+			&& (strncmp(source,m_params.server_ip,SocketDatagram::ADDRBUFF_LENGTH)==0
+			|| m_params.flags&Parameters::SERVER_ANY))
 			{
-			case MessageCtrl::ServerStartup::ID:
+			switch(msg.message_type)
 				{
-				MessageCtrl::DeviceCountRequest msg_temp;
-				MessageCtrl msg_out(msg_temp);
-				socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,source);
-			//	Notify a local object that a new server is started
-				}
-				break;
-
-			case MessageCtrl::IsAlive::ID:
-				{
-				MessageCtrl::NoOp nop;
-				MessageCtrl msg_ret(nop);
-				socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
-				}
-				break;
-
-			case MessageCtrl::DeviceCountResponse::ID:
-				{
-				const SyZmO::MessageCtrl::DeviceCountResponse* msg_in
-					=(const SyZmO::MessageCtrl::DeviceCountResponse*)msg.data;
-
-				for(SyZmO::uint32_t k=0;k<msg_in->n_devs;++k)
+				case MessageCtrl::IsAlive::ID:
 					{
-					SyZmO::MessageCtrl::DeviceNameRequest devreq;
-					devreq.id=k;
-					SyZmO::MessageCtrl msg_out(devreq);
-					socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out
-						,source);
+					MessageCtrl::NoOp nop;
+					MessageCtrl msg_ret(nop);
+					socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
 					}
-				}
-				break;
+					break;
+				
+				case MessageCtrl::ServerStartup::ID:
+					running=m_handler->serverStartup(*this,source);
+					break;
+					
+				case MessageCtrl::ServerShutdown::ID:
+					running=m_handler->serverShutdown(*this,source);
+					break;
 
-			case SyZmO::MessageCtrl::DeviceNameResponse::ID:
-				{
-				const SyZmO::MessageCtrl::DeviceNameResponse* msg_in
-					=(const SyZmO::MessageCtrl::DeviceNameResponse*)msg.data;
-			//	devices[msg_in->name].routeAdd(source);
+				case MessageCtrl::DeviceCountResponse::ID:
+					{
+					const SyZmO::MessageCtrl::DeviceCountResponse* msg_in
+						=(const SyZmO::MessageCtrl::DeviceCountResponse*)msg.data;
+					running=m_handler->deviceCountSet(*this,source,msg_in->n_devs);
+					}
+					break;
+
+				case SyZmO::MessageCtrl::DeviceNameResponse::ID:
+					{
+					const SyZmO::MessageCtrl::DeviceNameResponse* msg_in
+						=(const SyZmO::MessageCtrl::DeviceNameResponse*)msg.data;
+					running=m_handler->deviceAdd(*this,source,msg_in->id,msg_in->name);
+					}
+					break;
 				}
-				break;
 			}
 		}
 	return 0;

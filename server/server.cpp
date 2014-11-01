@@ -7,6 +7,8 @@ target[name[server.o] type[object]]
 #include "../bridge/socket_datagram.h"
 #include "../bridge/message_ctrl.h"
 
+#include <cstdio>
+
 SyZmO::Server::Server(const Parameters& params):
 	m_params(params)
 	{
@@ -27,35 +29,39 @@ int SyZmO::Server::run()
 	char source[SyZmO::SocketDatagram::ADDRBUFF_LENGTH];
 	while(socket_in.receive(&msg,sizeof(msg),source)==sizeof(msg))
 		{
-		switch(msg.message_type)
+		if(msg.validIs())
 			{
-			case MessageCtrl::IsAlive::ID:
+			switch(msg.message_type)
 				{
-				MessageCtrl::NoOp nop;
-				MessageCtrl msg_ret(nop);
-				socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
-				}
-				break;
+				case MessageCtrl::IsAlive::ID:
+					{
+					MessageCtrl::NoOp nop;
+					MessageCtrl msg_ret(nop);
+					socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
+					}
+					break;
 
-			case MessageCtrl::DeviceCountRequest::ID:
-				{
-				MessageCtrl::DeviceCountResponse resp;
-				resp.n_devs=MidiOut::deviceCount();
-				MessageCtrl msg_ret(resp);
-				socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
-				}
-				break;
+				case MessageCtrl::DeviceCountRequest::ID:
+					{
+					MessageCtrl::DeviceCountResponse resp;
+					resp.n_devs=MidiOut::deviceCount();
+					MessageCtrl msg_ret(resp);
+					socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
+					}
+					break;
 
-			case MessageCtrl::DeviceNameRequest::ID:
-				{
-				const MessageCtrl::DeviceNameRequest* msg_in
-					=(const MessageCtrl::DeviceNameRequest*)msg.data;
-				MessageCtrl::DeviceNameResponse resp;
-				MidiOut::deviceNameGet(msg_in->id,resp.name);
-				MessageCtrl msg_ret(resp);
-				socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
+				case MessageCtrl::DeviceNameRequest::ID:
+					{
+					const MessageCtrl::DeviceNameRequest* msg_in
+						=(const MessageCtrl::DeviceNameRequest*)msg.data;
+					MessageCtrl::DeviceNameResponse resp;
+					resp.id=msg_in->id;
+					MidiOut::deviceNameGet(msg_in->id,resp.name);
+					MessageCtrl msg_ret(resp);
+					socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
+					}
+					break;
 				}
-				break;
 			}
 		}
 	return 0;

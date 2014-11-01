@@ -20,9 +20,9 @@ namespace SyZmO
 		template<class T>
 		MessageCtrl(const T& message):
 			message_type(T::ID)
-			{
-			valuesSet(sizeof(T),&message);
-			}
+			{valuesSet(sizeof(T),&message);}
+			
+		bool validIs() const;
 
 		union
 			{
@@ -73,6 +73,7 @@ namespace SyZmO
 		struct DeviceNameResponse
 			{
 			static const uint32_t ID=7;
+			uint32_t id;
 			char name[32];
 			};
 

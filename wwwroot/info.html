@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>SyZmO @ $hostname</title>
+<title>SyZmO @ $host_name</title>
 <meta charset="windows-1252">
 <link rel="stylesheet" type="text/css" href="margins.css">
 <link rel="stylesheet" type="text/css" href="fonts.css">
@@ -10,19 +10,20 @@
 <link rel="stylesheet" type="text/css" href="layout.css">
 </head>
 <body>
-<div id="banner">
 <h1 id="logo">SyZmO</h1>
-</div>
-<div id="menu">
-<p>Status</p>
-<p>Log file</p>
-<p>Setup</p>
-<p>Control</p>
-</div>
-
+<ul id="menu">
+<li>Information</li>
+<li>Log file</li>
+<li>System setup</li>
+</ul>
 
 <div id="content">
-$status
+<h2>Server information</h2>
+<h3>Installed devices</h3>
+$device_list
+
+<h3>Connected clients</h3>
+$client_list
 </div>
 
 </body>
