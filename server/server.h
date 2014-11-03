@@ -45,7 +45,8 @@ namespace SyZmO
 			Parameters m_params;
 			SocketDatagram socket_in;
 			SocketDatagram socket_out;
-			std::map<uint32_t,Connection> connections;
+			size_t n_devs;
+			Connection** connections;
 		};
 	}
 

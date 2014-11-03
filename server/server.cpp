@@ -11,6 +11,11 @@ target[name[server.o] type[object]]
 SyZmO::Server::Server(const Parameters& params):
 	m_params(params)
 	{
+	n_devs=MidiOut::deviceCount();
+	connections=new Connection*[n_devs];
+	for(size_t k=0;k<n_devs;++k)
+		{connections[k]=NULL;}
+
 	socket_in.bind(m_params.port_in);
 	if(m_params.flags&Parameters::STARTUP_BROADCAST)
 		{
@@ -21,13 +26,35 @@ SyZmO::Server::Server(const Parameters& params):
 		socket_out.broadcastDisable();
 		}
 	}
-	
+
+SyZmO::Server::~Server()
+	{
+	MessageCtrl::ServerExitResponse msg_shutdown;
+	MessageCtrl msg(msg_shutdown);
+	if(m_params.flags&Parameters::SHUTDOWN_BROADCAST)
+		{
+		socket_out.broadcastEnable();
+		socket_out.send(&msg,sizeof(msg),m_params.port_out,"255.255.255.255");
+		socket_out.broadcastDisable();
+		}
+
+	for(size_t k=0;k<n_devs;++k)
+		{
+		if(connections[k]!=NULL)
+			{delete connections[k];}
+		}
+	delete[] connections;
+	}
+
+
 void SyZmO::Server::midiMessageSend(const char* client,uint32_t dev_id
 	,MessageMidi msg)
 	{
-	std::map<uint32_t,Connection>::iterator i=connections.find(dev_id);
-	if(i!=connections.end())
-		{i->second.messageSend(client,msg);}
+	if(dev_id < n_devs)
+		{
+		if(connections[dev_id]!=NULL)
+			{connections[dev_id]->messageSend(client,msg);}
+		}
 	}
 
 void SyZmO::Server::deviceCountSend(const char* client)
@@ -41,14 +68,13 @@ void SyZmO::Server::deviceCountSend(const char* client)
 void SyZmO::Server::deviceNameSend(const char* client,uint32_t dev_id)
 	{
 	MessageCtrl::DeviceNameResponse resp;
-	if(dev_id < MidiOut::deviceCount())
+	if(dev_id < n_devs)
 		{
 		resp.device_id=dev_id;
 		resp.status=MessageCtrl::DeviceNameResponse::STATUS_BUSY;
-		std::map<uint32_t,Connection>::iterator i=connections.find(dev_id);
-		if(i==connections.end())
+		if(connections[dev_id]==NULL)
 			{resp.status=MessageCtrl::DeviceNameResponse::STATUS_READY;}
-		MidiOut::deviceNameGet(dev_id,resp.name);	
+		MidiOut::deviceNameGet(dev_id,resp.name);
 		}
 	else
 		{
@@ -58,20 +84,19 @@ void SyZmO::Server::deviceNameSend(const char* client,uint32_t dev_id)
 	MessageCtrl msg_ret(resp);
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
-	
+
 void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 	{
 	MessageCtrl::ConnectionOpenResponsePrivate resp;
 	resp.status=MessageCtrl::ConnectionOpenResponsePrivate::STATUS_OK;
 	resp.device_id=dev_id;
-	std::map<uint32_t,Connection>::iterator i=connections.find(dev_id);
-	if(i==connections.end())
+	MidiOut::deviceNameGet(dev_id,resp.name);
+	if(connections[dev_id]==NULL)
 		{
 		try
 			{
-			connections.insert(std::pair<uint32_t,Connection>(dev_id
-				,Connection(client,dev_id)));
-			
+			connections[dev_id]=new Connection(client,dev_id);
+
 			MessageCtrl::ConnectionOpenResponsePublic resp_public;
 			resp_public.device_id=dev_id;
 			MessageCtrl msg_ret(resp_public);
@@ -85,7 +110,7 @@ void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 		}
 	else
 		{
-		if(!i->second.clientMatch(client))
+		if(!connections[dev_id]->clientMatch(client))
 			{resp.status=MessageCtrl::ConnectionOpenResponsePrivate::STATUS_BUSY;}
 		}
 	MessageCtrl msg_ret(resp);
@@ -96,15 +121,11 @@ void SyZmO::Server::clientDisconnect(const char* client,uint32_t dev_id)
 	{
 	MessageCtrl::ConnectionCloseResponsePrivate resp;
 	resp.device_id=dev_id;
-	resp.status=MessageCtrl::ConnectionCloseResponsePrivate::STATUS_OK;
-	std::map<uint32_t,Connection>::iterator i=connections.find(dev_id);
-	if(i==connections.end())
-		{
-		resp.status=MessageCtrl::ConnectionCloseResponsePrivate::NOT_CONNECTED;
-		}
+	if(connections[dev_id]==NULL)
+		{resp.status=MessageCtrl::ConnectionCloseResponsePrivate::NOT_CONNECTED;}
 	else
 		{
-		if(!i->second.clientMatch(client))
+		if(!connections[dev_id]->clientMatch(client))
 			{resp.status=MessageCtrl::ConnectionCloseResponsePrivate::NOT_OWNER;}
 		else
 			{
@@ -115,13 +136,15 @@ void SyZmO::Server::clientDisconnect(const char* client,uint32_t dev_id)
 			socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out
 				,"255.255.255.255");
 			socket_out.broadcastDisable();
+			delete connections[dev_id];
+			connections[dev_id]=NULL;
 			}
 		}
 	MessageCtrl msg_ret(resp);
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
-	
-	
+
+
 int SyZmO::Server::run()
 	{
 	MessageCtrl msg;
@@ -138,7 +161,7 @@ int SyZmO::Server::run()
 					midiMessageSend(source,m->device_id,m->midi);
 					};
 					break;
-					
+
 				case MessageCtrl::IsAlive::ID:
 					{
 					MessageCtrl::NoOp nop;
@@ -158,7 +181,7 @@ int SyZmO::Server::run()
 					deviceNameSend(source,msg_in->device_id);
 					}
 					break;
-				
+
 				case MessageCtrl::ConnectionOpenRequest::ID:
 					{
 					const MessageCtrl::ConnectionOpenRequest* msg_in
@@ -166,7 +189,7 @@ int SyZmO::Server::run()
 					clientConnect(source,msg_in->device_id);
 					}
 					break;
-					
+
 				case MessageCtrl::ConnectionCloseRequest::ID:
 					{
 					const MessageCtrl::ConnectionCloseRequest* msg_in
@@ -174,23 +197,11 @@ int SyZmO::Server::run()
 					clientDisconnect(source,msg_in->device_id);
 					}
 					break;
-					
+
 				case MessageCtrl::ServerExitRequest::ID:
 					return 0;
 				}
 			}
 		}
 	return 0;
-	}
-
-SyZmO::Server::~Server()
-	{
-	MessageCtrl::ServerExitResponse msg_shutdown;
-	MessageCtrl msg(msg_shutdown);
-	if(m_params.flags&Parameters::SHUTDOWN_BROADCAST)
-		{
-		socket_out.broadcastEnable();
-		socket_out.send(&msg,sizeof(msg),m_params.port_out,"255.255.255.255");
-		socket_out.broadcastDisable();
-		}
 	}

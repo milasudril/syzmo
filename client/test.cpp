@@ -15,45 +15,61 @@ class EventHandlerTest:public SyZmO::EventHandler
 			printf("Client created. Asking for number of devices\n");
 			client.deviceCountRequest(server);
 			}
-			
-		virtual void clientShutdown(SyZmO::Client& client,const char* server)
+
+		virtual void clientShutdown(SyZmO::Client& client)
 			{
 			printf("Client is beeing destroyed\n");
 			}
-	
+
 		virtual bool serverStartup(SyZmO::Client& client,const char* server)
 			{
 			printf("%s has started. Asking for number of devices\n",server);
 			client.deviceCountRequest(server);
 			return 1;
 			}
-			
+
 		virtual bool serverShutdown(SyZmO::Client& client,const char* server)
 			{
 			printf("%s has been shutdown\n",server);
 			return 0;
 			}
-		
-		virtual bool deviceCountSet(SyZmO::Client& client,const char* server
-			,SyZmO::uint32_t n_devs)
+
+		virtual bool deviceCount(SyZmO::Client& client,const char* server
+			,const SyZmO::MessageCtrl::DeviceCountResponse& message)
 			{
-			printf("%s has %u devices. They are\n",server,n_devs);
-			dev_count=n_devs;
-			for(SyZmO::uint32_t k=0;k<n_devs;++k)
+			dev_count=message.n_devs;
+			printf("%s has %u devices. They are\n",server,dev_count);
+			for(SyZmO::uint32_t k=0;k<dev_count;++k)
 				{
 				client.deviceNameRequest(server,k);
 				}
 			return 1;
 			}
-			
-		virtual bool deviceAdd(SyZmO::Client& client,const char* server
-			,SyZmO::uint32_t id,const char* device)
+
+		virtual bool deviceName(SyZmO::Client& client,const char* server
+			,const SyZmO::MessageCtrl::DeviceNameResponse& message)
 			{
-			printf(" %u. %s\n",id,device);
-			if(id==dev_count-1)
-				{return 0;}
+			printf(" %u. %s %u\n",message.device_id,message.name,message.status);
+			if(message.device_id==dev_count-1)
+				{client.serverExitRequest(server);}
 			return 1;
 			}
+
+		virtual bool connectionOpened(SyZmO::Client&, const char*
+			, const SyZmO::MessageCtrl::ConnectionOpenResponsePrivate&)
+			{return 1;}
+
+		virtual bool connectionOpened(SyZmO::Client&, const char*
+			, const SyZmO::MessageCtrl::ConnectionOpenResponsePublic&)
+			{return 1;}
+
+		virtual bool connectionClosed(SyZmO::Client&, const char*
+			, const SyZmO::MessageCtrl::ConnectionCloseResponsePrivate&)
+			{return 1;}
+
+		virtual bool connectionClosed(SyZmO::Client&, const char*
+			, const SyZmO::MessageCtrl::ConnectionCloseResponsePublic&)
+			{return 1;}
 	private:
 		SyZmO::uint32_t dev_count;
 	};
@@ -66,7 +82,7 @@ int main()
 	params.flags=SyZmO::Client::Parameters::SERVER_ANY;
 
 	EventHandlerTest test;
-	
+
 	SyZmO::Client client(params,test);
 	client.run();
 

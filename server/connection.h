@@ -15,18 +15,17 @@ namespace SyZmO
 		{
 		public:
 			Connection(const char* client,uint32_t device_id);
-			~Connection();
 			
 			bool clientMatch(const char* client) const;
 			void messageSend(const char* client,MessageMidi msg)
 				{
 				if(clientMatch(client))
-					{midi_out->messageSend(msg);}
+					{midi_out.messageSend(msg);}
 				}
 				
 		private:
 			char m_client[SocketDatagram::ADDRBUFF_LENGTH];
-			MidiOut* midi_out;
+			MidiOut midi_out;
 		};
 	};
 

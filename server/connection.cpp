@@ -6,19 +6,16 @@ target[name[connection.o] type[object]]
 #include <cstring>
 
 SyZmO::Connection::Connection(const char* client,uint32_t device_id):
-	midi_out(new MidiOut(device_id))
+	midi_out(device_id)
 	{
+	memset(m_client,0,SocketDatagram::ADDRBUFF_LENGTH);
 	strncpy(m_client,client,SocketDatagram::ADDRBUFF_LENGTH);
+	m_client[SocketDatagram::ADDRBUFF_LENGTH-1]=0;
 	}
 
-SyZmO::Connection::~Connection()
-	{
-	delete midi_out;
-	}
-	
 bool SyZmO::Connection::clientMatch(const char* client) const
 	{
-	if(strncmp(client,m_client,SocketDatagram::ADDRBUFF_LENGTH)==0)
+	if(strcmp(client,m_client)==0)
 		{return 1;}
 	return 0;
 	}

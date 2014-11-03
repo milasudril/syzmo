@@ -1,10 +1,10 @@
-# Makefile generated 2014-11-1 17:21
+# Makefile generated 2014-11-2 17:49
 #
 # Host:   x86_64, GNU/Linux
 # Target: x86, Windows
 # Shell:  /bin/bash
 
-all: __wand_targets_dbg_win __wand_targets_dbg_win/bridge __wand_targets_dbg_win/bridge/exception_missing.o __wand_targets_dbg_win/bridge/message_ctrl.o __wand_targets_dbg_win/bridge/netresource.o __wand_targets_dbg_win/bridge/socket_datagram.o __wand_targets_dbg_win/cgi __wand_targets_dbg_win/client __wand_targets_dbg_win/client/client.o __wand_targets_dbg_win/client/event_handler_nop.o __wand_targets_dbg_win/server __wand_targets_dbg_win/server/midi_out.o __wand_targets_dbg_win/server/connection.o __wand_targets_dbg_win/server/server.o __wand_targets_dbg_win/server/syzmo_server.exe
+all: __wand_targets_dbg_win __wand_targets_dbg_win/bridge __wand_targets_dbg_win/bridge/exception_missing.o __wand_targets_dbg_win/bridge/message_ctrl.o __wand_targets_dbg_win/bridge/netresource.o __wand_targets_dbg_win/bridge/socket_datagram.o __wand_targets_dbg_win/client __wand_targets_dbg_win/client/client.o __wand_targets_dbg_win/client_cgi __wand_targets_dbg_win/server __wand_targets_dbg_win/server/midi_out.o __wand_targets_dbg_win/server/connection.o __wand_targets_dbg_win/server/server.o __wand_targets_dbg_win/server/syzmo_server.exe
 
 __wand_targets_dbg_win: | .
 	mkdir "__wand_targets_dbg_win"
@@ -24,17 +24,14 @@ __wand_targets_dbg_win/bridge/netresource.o: bridge/netresource.cpp bridge/netre
 __wand_targets_dbg_win/bridge/socket_datagram.o: bridge/socket_datagram-win32.cpp bridge/exception_missing.h bridge/netresource.h bridge/socket_datagram.h bridge/inttypes.h
 	g++ "bridge/socket_datagram-win32.cpp" -g -Wall -c -I"/home/torbjorr/deployed" -o "__wand_targets_dbg_win/bridge/socket_datagram.o"
 
-__wand_targets_dbg_win/cgi: | cgi
-	mkdir "__wand_targets_dbg_win/cgi"
-
 __wand_targets_dbg_win/client: | client
 	mkdir "__wand_targets_dbg_win/client"
 
 __wand_targets_dbg_win/client/client.o: client/client.cpp bridge/message_ctrl.h bridge/message_midi.h bridge/server_setup.h client/event_handler.h client/client.h bridge/exception_missing.h bridge/netresource.h bridge/socket_datagram.h bridge/inttypes.h
 	g++ "client/client.cpp" -g -Wall -c -I"/home/torbjorr/deployed" -o "__wand_targets_dbg_win/client/client.o"
 
-__wand_targets_dbg_win/client/event_handler_nop.o: client/event_handler_nop.cpp client/event_handler_nop.h client/event_handler.h bridge/inttypes.h
-	g++ "client/event_handler_nop.cpp" -g -Wall -c -I"/home/torbjorr/deployed" -o "__wand_targets_dbg_win/client/event_handler_nop.o"
+__wand_targets_dbg_win/client_cgi: | client_cgi
+	mkdir "__wand_targets_dbg_win/client_cgi"
 
 __wand_targets_dbg_win/server: | server
 	mkdir "__wand_targets_dbg_win/server"

@@ -3,11 +3,11 @@ target[name[syzmo_client] type[application] platform[;GNU/Linux]]
 #endif
 
 #include "client.h"
-#include "event_handler.h"
+#include "event_handler_nop.h"
 
 #include <cstdio>
 
-class EventHandlerTest:public SyZmO::EventHandler
+class EventHandlerTest:public SyZmO::EventHandlerNop
 	{
 	public:
 		virtual void clientStartup(SyZmO::Client& client,const char* server)
@@ -35,11 +35,11 @@ class EventHandlerTest:public SyZmO::EventHandler
 			}
 		
 		virtual bool deviceCountSet(SyZmO::Client& client,const char* server
-			,SyZmO::uint32_t n_devs)
+			,const SyZmO::MessageCtrl::DeviceCountResponse& message)
 			{
-			printf("%s has %u devices. They are\n",server,n_devs);
-			dev_count=n_devs;
-			for(SyZmO::uint32_t k=0;k<n_devs;++k)
+			dev_count=message.n_devs;
+			printf("%s has %u devices. They are\n",server,dev_count);
+			for(SyZmO::uint32_t k=0;k<dev_count;++k)
 				{
 				client.deviceNameRequest(server,k);
 				}
@@ -47,11 +47,11 @@ class EventHandlerTest:public SyZmO::EventHandler
 			}
 			
 		virtual bool deviceAdd(SyZmO::Client& client,const char* server
-			,SyZmO::uint32_t id,const char* device)
+			,const SyZmO::MessageCtrl::DeviceNameResponse& message)
 			{
-			printf(" %u %s\n",id,device);
-			if(id==dev_count-1)
-				{return 0;}
+			printf(" %u. %s %u\n",message.device_id,message.name,message.status);
+			if(message.device_id==dev_count-1)
+				{client.serverExitRequest(server);}
 			return 1;
 			}
 	private:
