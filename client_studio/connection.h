@@ -43,10 +43,16 @@ namespace SyZmO
 				bool match(const char* server,uint32_t device_id) const
 					{return (match(server) && m_device_id==device_id);}
 
+				bool isAliveRequest(Client& client);
+
+				void isAlive()
+					{isalive_sent=0;}
+
 			private:
 				MuStudio::MIDI::InputExported port_in;
 				char m_server[SocketDatagram::ADDRBUFF_LENGTH];
 				uint32_t m_device_id;
+				bool isalive_sent;
 
 				MuStudio::MIDI::Event event_next;
 				size_t time_prev;

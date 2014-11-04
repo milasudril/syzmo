@@ -41,10 +41,10 @@ namespace SyZmO
 			MessageMidi midi;
 			};
 
-		struct NoOp
+		struct IsAliveRequest
 			{static const uint32_t ID=1;};
 
-		struct IsAlive
+		struct IsAliveResponse
 			{static const uint32_t ID=2;};
 
 		struct DeviceCountRequest

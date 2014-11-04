@@ -29,6 +29,9 @@ namespace SyZmO
 			void broadcastEnable();
 			void broadcastDisable();
 
+			void recvTimeoutSet(double time);
+			bool recvTimeout() const;
+
 		private:
 			class Socket;
 			Socket* impl;

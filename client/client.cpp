@@ -7,12 +7,15 @@ target[name[client.o] type[object]]
 #include "../bridge/message_ctrl.h"
 #include <cstring>
 
+#include <cstdio>
+
 SyZmO::Client::Client(const SyZmO::Client::Parameters& params,EventHandler& eh):
 	m_params(params),m_handler(eh)
 	{
 	socket_in.bind(m_params.port_in);
 	MessageCtrl::DeviceCountRequest msg_temp;
 	MessageCtrl msg_out(msg_temp);
+	socket_in.recvTimeoutSet(2);
 	if(m_params.flags & Parameters::SERVER_ANY)
 		{
 		socket_out.broadcastEnable();
@@ -35,6 +38,13 @@ void SyZmO::Client::messageMidiSend(const char* server,uint32_t device_id
 	msg_temp.device_id=device_id;
 	msg_temp.midi=msg;
 
+	MessageCtrl msg_out(msg_temp);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
+
+void SyZmO::Client::isAliveRequest(const char* server)
+	{
+	MessageCtrl::IsAliveRequest msg_temp;
 	MessageCtrl msg_out(msg_temp);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
@@ -85,6 +95,11 @@ int SyZmO::Client::run()
 	while(running)
 		{
 		socket_in.receive(&msg,sizeof(msg),source);
+		if(socket_in.recvTimeout())
+			{
+			memset(&msg,0,sizeof(msg));
+			running=m_handler.timeout(*this);
+			}
 
 		if(msg.validIs()
 			&& (strcmp(source,m_params.server_ip)==0
@@ -92,12 +107,16 @@ int SyZmO::Client::run()
 			{
 			switch(msg.message_type)
 				{
-				case MessageCtrl::IsAlive::ID:
+				case MessageCtrl::IsAliveRequest::ID:
 					{
-					MessageCtrl::NoOp nop;
+					MessageCtrl::IsAliveResponse nop;
 					MessageCtrl msg_ret(nop);
 					socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
 					}
+					break;
+
+				case MessageCtrl::IsAliveResponse::ID:
+					running=m_handler.isAlive(*this,source);
 					break;
 
 				case MessageCtrl::ServerStartupResponse::ID:

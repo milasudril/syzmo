@@ -46,19 +46,36 @@ class SyZmO::SocketDatagram::Socket
 
 		uint16_t receive(void* buffer,uint16_t length)
 			{
+			recv_timeout=0;
 			sockaddr_in from;
 			int length_from=sizeof(from);
-			return recvfrom(sock,(char*)buffer,length,0,(sockaddr*)&from
+			int ret=recvfrom(sock,(char*)buffer,length,0,(sockaddr*)&from
 				,&length_from);
+			if(ret==SOCKET_ERROR)
+				{
+				if(WSAGetLastError()==WSAETIMEDOUT)
+					{recv_timeout=1;}
+				return (uint16_t)-1;
+				}
+			return ret;
 			}
 
 		uint16_t receive(void* buffer,uint16_t length
 			,char* addrbuff)
 			{
+			recv_timeout=0;
+
 			sockaddr_in from;
 			int length_from=sizeof(from);
 			int ret=recvfrom(sock,(char*)buffer,length,0,(sockaddr*)&from
 				,&length_from);
+
+			if(ret==SOCKET_ERROR)
+				{
+				if(WSAGetLastError()==WSAETIMEDOUT)
+					{recv_timeout=1;}
+				return (uint16_t)-1;
+				}
 
 			const char* temp=inet_ntoa(from.sin_addr);
 			memset(addrbuff,0,ADDRBUFF_LENGTH*sizeof(char));
@@ -94,6 +111,17 @@ class SyZmO::SocketDatagram::Socket
 				{throw SyZmO::ExceptionMissing(__FILE__,__LINE__);}
 			}
 
+		void recvTimeoutSet(double time)
+			{
+			DWORD t=(DWORD)( 1e3*time + 0.5 );
+			if(setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&t
+					,sizeof(t)) == -1)
+				{throw SyZmO::ExceptionMissing(__FILE__,__LINE__);}
+			}
+
+		bool recvTimeout() const
+			{return recv_timeout;}
+
 		~Socket()
 			{
 			shutdown(sock,SD_BOTH);
@@ -103,6 +131,7 @@ class SyZmO::SocketDatagram::Socket
 	private:
 		SOCKET sock;
 		NetResource::Block block;
+		bool recv_timeout;
 	};
 
 SyZmO::SocketDatagram::SocketDatagram()
@@ -127,8 +156,15 @@ SyZmO::uint16_t SyZmO::SocketDatagram::send(const void* buffer,uint16_t length,u
 	,const char* address)
 	{return impl->send(buffer,length,port,address);}
 
+
 void SyZmO::SocketDatagram::broadcastEnable()
-	{return impl->broadcastEnable();}
+	{impl->broadcastEnable();}
 
 void SyZmO::SocketDatagram::broadcastDisable()
-	{return impl->broadcastDisable();}
+	{impl->broadcastDisable();}
+
+void SyZmO::SocketDatagram::recvTimeoutSet(double t)
+	{impl->recvTimeoutSet(t);}
+
+bool SyZmO::SocketDatagram::recvTimeout() const
+	{return impl->recvTimeout();}

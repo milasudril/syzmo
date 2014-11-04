@@ -30,6 +30,7 @@ namespace SyZmO
 
 			void messageMidiSend(const char* server,uint32_t device_id
 				,MessageMidi msg);
+			void isAliveRequest(const char* server);
 			void deviceCountRequest(const char* server);
 			void deviceNameRequest(const char* server,uint32_t id);
 			void connectionOpenRequest(const char* server,uint32_t device_id);

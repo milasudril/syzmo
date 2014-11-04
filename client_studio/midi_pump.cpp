@@ -30,15 +30,13 @@ void SyZmO::ClientStudio::MidiPump::eventPost(const char* server
 	event_next.midi=msg;
 	event_next.delay=delay;
 	buffer.push_back(event_next);
-
-//	m_client->messageMidiSend(server,device_id,msg);
 	}
 
 namespace
 	{
 	void sleep(double time)
 		{
-		size_t secs=(size_t)time;
+		time_t secs=(time_t)time;
 		long ns=long(1e9*(time-secs));
 
 		timespec ts

@@ -17,6 +17,9 @@ namespace SyZmO
 			virtual void clientStartup(Client& client,const char* server)=0;
 			virtual void clientShutdown(Client& client)=0;
 
+			virtual bool timeout(Client& client)=0;
+			virtual bool isAlive(Client& client,const char* server)=0;
+
 			virtual bool deviceCount(Client& client,const char* server
 				,const MessageCtrl::DeviceCountResponse& message)=0;
 			virtual bool deviceName(Client& client,const char* server

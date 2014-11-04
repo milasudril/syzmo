@@ -11,6 +11,8 @@ dependency[connection.o]
 
 namespace SyZmO
 	{
+	class Server;
+	
 	class Connection
 		{
 		public:
@@ -23,9 +25,15 @@ namespace SyZmO
 					{midi_out.messageSend(msg);}
 				}
 				
+			bool isAliveRequest(Server& server);
+			
+			void isAlive()
+				{isalive_sent=0;}
+				
 		private:
 			char m_client[SocketDatagram::ADDRBUFF_LENGTH];
 			MidiOut midi_out;
+			bool isalive_sent;
 		};
 	};
 

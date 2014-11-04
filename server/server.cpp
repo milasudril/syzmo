@@ -7,7 +7,6 @@ target[name[server.o] type[object]]
 #include "../bridge/socket_datagram.h"
 #include "../bridge/message_ctrl.h"
 
-
 SyZmO::Server::Server(const Parameters& params):
 	m_params(params)
 	{
@@ -16,6 +15,7 @@ SyZmO::Server::Server(const Parameters& params):
 	for(size_t k=0;k<n_devs;++k)
 		{connections[k]=NULL;}
 
+	socket_in.recvTimeoutSet(2);
 	socket_in.bind(m_params.port_in);
 	if(m_params.flags&Parameters::STARTUP_BROADCAST)
 		{
@@ -96,7 +96,6 @@ void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 		try
 			{
 			connections[dev_id]=new Connection(client,dev_id);
-
 			MessageCtrl::ConnectionOpenResponsePublic resp_public;
 			resp_public.device_id=dev_id;
 			MessageCtrl msg_ret(resp_public);
@@ -143,14 +142,61 @@ void SyZmO::Server::clientDisconnect(const char* client,uint32_t dev_id)
 	MessageCtrl msg_ret(resp);
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
-
+	
+void SyZmO::Server::connectionsIsAliveRequest()
+	{
+	Connection** ptr=connections;
+	while(ptr!=connections + n_devs)
+		{
+		if(*ptr!=NULL)
+			{
+			if(!(*ptr)->isAliveRequest(*this))
+				{
+				delete *ptr;
+				*ptr=NULL;
+				}
+			}
+		++ptr;
+		}
+	}
+	
+void SyZmO::Server::isAliveRequest(const char* client)
+	{
+	MessageCtrl::IsAliveRequest resp;
+	MessageCtrl msg_ret(resp);
+	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+	}
+	
+void SyZmO::Server::connectionsIsAlive(const char* client)
+	{
+	Connection** ptr=connections;
+	while(ptr!=connections + n_devs)
+		{
+		if(*ptr!=NULL)
+			{
+			if((*ptr)->clientMatch(client))
+				{
+				delete *ptr;
+				*ptr=NULL;
+				}
+			}
+		++ptr;
+		}
+	}
 
 int SyZmO::Server::run()
 	{
 	MessageCtrl msg;
 	char source[SyZmO::SocketDatagram::ADDRBUFF_LENGTH];
-	while(socket_in.receive(&msg,sizeof(msg),source)==sizeof(msg))
+	bool running=1;
+	while(running)
 		{
+		socket_in.receive(&msg,sizeof(msg),source);
+		if(socket_in.recvTimeout())
+			{
+			connectionsIsAliveRequest();
+			}
+		
 		if(msg.validIs())
 			{
 			switch(msg.message_type)
@@ -162,12 +208,16 @@ int SyZmO::Server::run()
 					};
 					break;
 
-				case MessageCtrl::IsAlive::ID:
+				case MessageCtrl::IsAliveRequest::ID:
 					{
-					MessageCtrl::NoOp nop;
+					MessageCtrl::IsAliveResponse nop;
 					MessageCtrl msg_ret(nop);
 					socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
 					}
+					break;
+					
+				case MessageCtrl::IsAliveResponse::ID:
+					connectionsIsAlive(source);
 					break;
 
 				case MessageCtrl::DeviceCountRequest::ID:

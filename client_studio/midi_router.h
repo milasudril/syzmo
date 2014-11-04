@@ -32,8 +32,10 @@ namespace SyZmO
 
 				void connectionAdd(const char* name,const char* server
 					,uint32_t device_id);
-				void connectionRemove(const char* server);
+				void connectionsRemove(const char* server);
 				void connectionRemove(const char* server,uint32_t device_id);
+				void connectionsIsAliveRequest(SyZmO::Client& client);
+				void connectionsIsAlive(const char* server);
 
 				void pumpClientSet(SyZmO::Client& client_new)
 					{pump.clientSet(client_new);}

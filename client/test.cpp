@@ -34,6 +34,18 @@ class EventHandlerTest:public SyZmO::EventHandler
 			return 0;
 			}
 
+		virtual bool timeout(SyZmO::Client& client)
+			{
+			printf("Timeout\n");
+			return 0;
+			}
+
+		virtual bool isAlive(SyZmO::Client& client,const char* server)
+			{
+			printf("%s is alive\n",server);
+			return 1;
+			}
+
 		virtual bool deviceCount(SyZmO::Client& client,const char* server
 			,const SyZmO::MessageCtrl::DeviceCountResponse& message)
 			{

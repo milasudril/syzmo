@@ -9,6 +9,7 @@ target[name[socket_datagram.o] type[object] platform[;GNU/Linux]]
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <cstring>
 
@@ -48,21 +49,35 @@ class SyZmO::SocketDatagram::Socket
 
 		uint16_t receive(void* buffer,uint16_t length)
 			{
+			recv_timeout=0;
 			sockaddr_in from;
 			socklen_t length_from=sizeof(from);
-			return recvfrom(sock,(char*)buffer,length,0,(sockaddr*)&from
+			auto ret=recvfrom(sock,(char*)buffer,length,0,(sockaddr*)&from
 				,&length_from);
+			if(ret==-1)
+				{
+				if(errno==EAGAIN)
+					{recv_timeout=1;}
+				}
+			return ret;
 			}
 
 		uint16_t receive(void* buffer,uint16_t length
 			,char* addrbuff)
 			{
+			recv_timeout=0;
 			sockaddr_in from;
 			socklen_t length_from=sizeof(from);
-			uint16_t ret=recvfrom(sock,(char*)buffer,length,0,(sockaddr*)&from
+			auto ret=recvfrom(sock,(char*)buffer,length,0,(sockaddr*)&from
 				,&length_from);
+			if(ret==-1)
+				{
+				if(errno==EAGAIN)
+					{recv_timeout=1;}
+				return ret;
+				}
 
-			const char* temp=inet_ntoa(from.sin_addr);
+			auto temp=inet_ntoa(from.sin_addr);
 			memset(addrbuff,0,ADDRBUFF_LENGTH*sizeof(char));
 			strncpy(addrbuff,temp,ADDRBUFF_LENGTH);
 			addrbuff[ADDRBUFF_LENGTH-1]=0;
@@ -96,11 +111,26 @@ class SyZmO::SocketDatagram::Socket
 				{throw SyZmO::ExceptionMissing(__FILE__,__LINE__);}
 			}
 
+		void recvTimeoutSet(double time)
+			{
+			timeval t;
+			t.tv_sec=(time_t)time;
+			t.tv_usec=(suseconds_t)(1e6 * (time - t.tv_sec) );
+			if(setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (void*)&t
+					,sizeof(t)) == -1)
+				{throw SyZmO::ExceptionMissing(__FILE__,__LINE__);}
+			}
+
+		bool recvTimeout() const
+			{return recv_timeout;}
+
 		~Socket()
 			{close(sock);}
 
+
 	private:
 		int sock;
+		bool recv_timeout;
 	};
 
 SyZmO::SocketDatagram::SocketDatagram()
@@ -126,7 +156,13 @@ SyZmO::uint16_t SyZmO::SocketDatagram::send(const void* buffer,uint16_t length
 	{return impl->send(buffer,length,port,address);}
 
 void SyZmO::SocketDatagram::broadcastEnable()
-	{return impl->broadcastEnable();}
+	{impl->broadcastEnable();}
 
 void SyZmO::SocketDatagram::broadcastDisable()
-	{return impl->broadcastDisable();}
+	{impl->broadcastDisable();}
+
+void SyZmO::SocketDatagram::recvTimeoutSet(double time)
+	{impl->recvTimeoutSet(time);}
+
+bool SyZmO::SocketDatagram::recvTimeout() const
+	{return impl->recvTimeout();}

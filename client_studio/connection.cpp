@@ -17,6 +17,7 @@ SyZmO::ClientStudio::Connection::Connection(MuStudio::Client& studio_client
 	m_server[SyZmO::SocketDatagram::ADDRBUFF_LENGTH-1]=0;
 	m_device_id=device_id;
 	time_prev=0;
+	isalive_sent=0;
 	}
 
 bool SyZmO::ClientStudio::Connection::match(const char* server) const
@@ -34,4 +35,13 @@ void SyZmO::ClientStudio::Connection::eventPost(MidiPump& pump,size_t time)
 		time_prev=time;
 		event_has=port_in.eventNextGet(event_next);
 		}
+	}
+
+bool SyZmO::ClientStudio::Connection::isAliveRequest(Client& client)
+	{
+	if(isalive_sent)
+		{return 0;}
+	client.isAliveRequest(m_server);
+	isalive_sent=1;
+	return 1;
 	}

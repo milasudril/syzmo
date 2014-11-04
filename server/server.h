@@ -38,6 +38,11 @@ namespace SyZmO
 			void deviceNameSend(const char* client,uint32_t dev_id);
 			void clientConnect(const char* client,uint32_t dev_id);
 			void clientDisconnect(const char* client,uint32_t dev_id);
+			void isAliveRequest(const char* client);
+			
+			void connectionsIsAliveRequest();
+			void connectionsIsAlive(const char* server);
+			
 			
 			int run();
 

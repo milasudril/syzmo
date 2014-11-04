@@ -19,7 +19,19 @@ void SyZmO::ClientStudio::EventHandler::clientStartup(Client& client
 
 void SyZmO::ClientStudio::EventHandler::clientShutdown(Client& client)
 	{
-		
+
+	}
+
+bool SyZmO::ClientStudio::EventHandler::timeout(Client& client)
+	{
+	m_router.connectionsIsAliveRequest(client);
+	return 1;
+	}
+
+bool SyZmO::ClientStudio::EventHandler::isAlive(Client& client,const char* server)
+	{
+	m_router.connectionsIsAlive(server);
+	return 1;
 	}
 
 bool SyZmO::ClientStudio::EventHandler::deviceCount(Client& client
@@ -80,6 +92,6 @@ bool SyZmO::ClientStudio::EventHandler::serverStartup(Client& client
 bool SyZmO::ClientStudio::EventHandler::serverShutdown(Client& client
 	,const char* server)
 	{
-	m_router.connectionRemove(server);
+	m_router.connectionsRemove(server);
 	return 1;
 	}

@@ -22,9 +22,10 @@ namespace SyZmO
 				void clientStartup(Client& client,const char* server);
 				void clientShutdown(Client& client);
 
+				bool timeout(Client& client);
+				bool isAlive(Client& client,const char* server);
 				bool deviceCount(Client& client,const char* server
 					,const MessageCtrl::DeviceCountResponse& message);
-
 				bool deviceName(Client& client,const char* server
 					,const MessageCtrl::DeviceNameResponse& message);
 				bool connectionOpened(Client& client,const char* server
