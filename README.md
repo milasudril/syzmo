@@ -25,7 +25,6 @@ TODO:s
 ------
  * Fix controlled shutdown on both client and server
  * Implement proper exception handling
- * Complete is-a-live mechanism so the server can release the synthesizer that is no longer in use
  * Complete the web interface
  * Write a quick instruction manual
 
