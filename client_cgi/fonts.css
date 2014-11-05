@@ -1,0 +1,8 @@
+p,td,li,code{
+	font-family:"Perfect DOS vga 437","unifont";font-size:16px
+	transform:scale(1,1.35); /* W3C */
+	-webkit-transform:scale(1,1.35); /* Safari and Chrome */
+	-moz-transform:scale(1,1.35); /* Firefox */
+	-ms-transform:scale(1,1.35); /* IE 9 */
+	-o-transform:scale(1,1.35); /* Opera */
+}
