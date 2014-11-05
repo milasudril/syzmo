@@ -19,6 +19,13 @@ SyZmO::ClientStudio::MidiRouter::MidiRouter(Herbs::LogWriter& writer
 SyZmO::ClientStudio::MidiRouter::~MidiRouter()
 	{
 	deactivate();
+	auto ptr=connections.begin();
+	while(ptr!=connections.end())
+		{
+		if(*ptr!=nullptr)
+			{delete *ptr;}
+		++ptr;
+		}
 	}
 
 int SyZmO::ClientStudio::MidiRouter::onProcess(size_t n_frames)
