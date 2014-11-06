@@ -10,8 +10,7 @@ target[name[midi_pump.o] type[object] platform[;GNU/Linux]]
 #include <time.h>
 
 
-SyZmO::ClientStudio::MidiPump::MidiPump(Herbs::LogWriter& writer
-	,size_t length_buffer)
+SyZmO::ClientStudio::MidiPump::MidiPump(Herbs::LogWriter& writer)
 	:Herbs::Runnable(writer),m_client(nullptr),m_stop(0)
 	{}
 

@@ -8,9 +8,8 @@ target[name[midi_router.o] type[object]]
 
 #include <cstdio>
 
-SyZmO::ClientStudio::MidiRouter::MidiRouter(Herbs::LogWriter& writer
-	,size_t length_buffer):
-	MuStudio::Client("SyZmO Client"),pump(writer,length_buffer)
+SyZmO::ClientStudio::MidiRouter::MidiRouter(Herbs::LogWriter& writer):
+	MuStudio::Client("SyZmO Client"),pump(writer)
 	{
 	activate();
 	pump.sampleRateSet(sampleRateGet());

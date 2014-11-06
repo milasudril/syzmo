@@ -22,7 +22,7 @@ namespace SyZmO
 		class MidiPump:public Herbs::Runnable
 			{
 			public:
-				MidiPump(Herbs::LogWriter& writer,size_t length_buffer);
+				MidiPump(Herbs::LogWriter& writer);
 				~MidiPump();
 
 				int run();

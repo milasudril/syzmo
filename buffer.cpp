@@ -5,6 +5,24 @@ target[name[buffer.o] type[object]]
 #include "buffer.h"
 #include <cstdlib>
 
+SyZmO::Buffer::Buffer(size_t length_init,const char* buff)
+	{
+	ptr_begin=(char*)malloc(length_init*sizeof(char));
+	ptr_end=ptr_begin;
+	length_alloc=length_init;
+	append(buff);
+	}
+
+SyZmO::Buffer& SyZmO::Buffer::append(const char* buffer)
+	{
+	while(*buffer!='\0')
+		{
+		append(*buffer);
+		++buffer;
+		}
+	return *this;
+	}
+
 SyZmO::Buffer::Buffer(size_t length_init)
 	{
 	ptr_begin=(char*)malloc(length_init*sizeof(char));

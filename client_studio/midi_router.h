@@ -24,7 +24,7 @@ namespace SyZmO
 		class MidiRouter:public MuStudio::Client
 			{
 			public:
-				MidiRouter(Herbs::LogWriter& writer,size_t length_buffer);
+				MidiRouter(Herbs::LogWriter& writer);
 				~MidiRouter();
 
 				int onProcess(size_t n_frames);

@@ -3,7 +3,7 @@ target[name[midi_out.o] type[object] platform[;Windows] dependency[winmm;externa
 #endif
 
 #include "midi_out.h"
-#include "../bridge/exception_missing.h"
+#include "../exception_missing.h"
 #include <windows.h>
 #include <cassert>
 
@@ -22,7 +22,7 @@ void SyZmO::MidiOut::deviceNameGet(uint32_t id,char* name)
 SyZmO::MidiOut::MidiOut(uint32_t id)
 	{
 	assert(sizeof(handle)==sizeof(HMIDIOUT));
-	
+
 	uint32_t res=midiOutOpen((HMIDIOUT*)(&handle),id,0,0,CALLBACK_NULL);
 	if(res!=MMSYSERR_NOERROR)
 		{throw ExceptionMissing(__FILE__,__LINE__);}

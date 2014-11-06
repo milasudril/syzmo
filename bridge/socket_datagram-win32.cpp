@@ -5,7 +5,7 @@ dependency[ws2_32;external]]
 
 #include "socket_datagram.h"
 #include "netresource.h"
-#include "exception_missing.h"
+#include "../exception_missing.h"
 
 #include <winsock2.h>
 #include <windows.h>

@@ -3,7 +3,7 @@ target[name[socket_datagram.o] type[object] platform[;GNU/Linux]]
 #endif
 
 #include "socket_datagram.h"
-#include "exception_missing.h"
+#include "../exception_missing.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
