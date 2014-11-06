@@ -4,7 +4,7 @@ target[name[syzmo_server] type[application]]
 #endif
 
 #include "server.h"
-//#include "../configfile.h"
+#include "../configfile.h"
 
 int main()
 	{
@@ -14,6 +14,8 @@ int main()
 	params.port_in=params.port_out+1;
 	params.flags=SyZmO::ServerSetup::STARTUP_BROADCAST;
 
+	SyZmO::ConfigFile config("syzmo_config_server.txt");
+	
 	SyZmO::Server server(params);
 	server.run();
 	return 0;
