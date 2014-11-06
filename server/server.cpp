@@ -9,7 +9,7 @@ target[name[server.o] type[object]]
 
 #include <windows.h>
 
-SyZmO::Server::Server(const Parameters& params):
+SyZmO::Server::Server(const ServerSetup& params):
 	m_params(params)
 	{
 	n_devs=MidiOut::deviceCount();
@@ -19,7 +19,7 @@ SyZmO::Server::Server(const Parameters& params):
 
 	socket_in.recvTimeoutSet(2);
 	socket_in.bind(m_params.port_in);
-	if(m_params.flags&Parameters::STARTUP_BROADCAST)
+	if(m_params.flags&ServerSetup::STARTUP_BROADCAST)
 		{
 		socket_out.broadcastEnable();
 		MessageCtrl::ServerStartupResponse msg_startup;
@@ -33,12 +33,9 @@ SyZmO::Server::~Server()
 	{
 	MessageCtrl::ServerExitResponse msg_shutdown;
 	MessageCtrl msg(msg_shutdown);
-	if(m_params.flags&Parameters::SHUTDOWN_BROADCAST)
-		{
-		socket_out.broadcastEnable();
-		socket_out.send(&msg,sizeof(msg),m_params.port_out,"255.255.255.255");
-		socket_out.broadcastDisable();
-		}
+	socket_out.broadcastEnable();
+	socket_out.send(&msg,sizeof(msg),m_params.port_out,"255.255.255.255");
+	socket_out.broadcastDisable();
 
 	for(size_t k=0;k<n_devs;++k)
 		{
@@ -180,6 +177,16 @@ void SyZmO::Server::hostnameSend(const char* client)
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
 	
+void SyZmO::Server::setupGetSend(const char* client)
+	{
+	MessageCtrl::ServerSetupGetResponse resp;
+	resp.setup=m_params;
+	
+	MessageCtrl msg_ret(resp);
+	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+	}
+	
+	
 void SyZmO::Server::connectionsIsAlive(const char* client)
 	{
 	Connection** ptr=connections;
@@ -197,6 +204,8 @@ void SyZmO::Server::connectionsIsAlive(const char* client)
 		}
 	}
 
+
+	
 int SyZmO::Server::run()
 	{
 	MessageCtrl msg;
@@ -261,6 +270,10 @@ int SyZmO::Server::run()
 
 				case MessageCtrl::ServerHostnameRequest::ID:
 					hostnameSend(source);
+					break;
+				
+				case MessageCtrl::ServerSetupGetRequest::ID:
+					setupGetSend(source);
 					break;
 				}
 			}

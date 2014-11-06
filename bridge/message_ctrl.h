@@ -133,17 +133,12 @@ namespace SyZmO
 			char hostname[HOSTNAME_LENGTH];
 			};
 
-		struct ServerSetupRequest
+		struct ServerSetupGetRequest
 			{
 			static const uint32_t ID=15;
-			uint32_t flags;
-			static const uint32_t PORT_CLIENT_SET=0x1;
-			static const uint32_t PORT_SERVER_SET=0x2;
-			
-			ServerSetup setup;
 			};
 
-		struct ServerSetupResponse
+		struct ServerSetupGetResponse
 			{
 			static const uint32_t ID=16;
 			ServerSetup setup;

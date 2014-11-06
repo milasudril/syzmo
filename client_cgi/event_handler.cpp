@@ -76,6 +76,20 @@ bool SyZmO::ClientCgi::EventHandler::serverHostname(Client& client,const char* s
 	printf("%s",message.hostname);
 	return 0;
 	}
+	
+bool SyZmO::ClientCgi::EventHandler::serverSetupGet(Client& client,const char* server
+	,const MessageCtrl::ServerSetupGetResponse& message)
+	{
+	printf("<table>\n"
+		"<tr><th class=\"transpose\">Input port:</th><td>%u</td></tr>\n"
+		"<tr><th class=\"transpose\">Output port:</th><td>%u</td></tr>\n"
+		"<tr><th class=\"transpose\">Broadcast startup message:</th><td>%s</td></tr>\n"
+		"</table>"
+		,message.setup.port_in
+		,message.setup.port_out
+		,message.setup.flags&ServerSetup::STARTUP_BROADCAST? "Yes" : "No");
+	return 0;
+	}
 
 bool SyZmO::ClientCgi::EventHandler::serverStartup(Client& client
 	,const char* server)

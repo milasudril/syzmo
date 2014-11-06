@@ -36,16 +36,20 @@ namespace SyZmO
 			void connectionOpenRequest(const char* server,uint32_t device_id);
 			void connectionCloseRequest(const char* server,uint32_t device_id);
 			void serverHostnameRequest(const char* server);
+			void serverSetupGetRequest(const char* server);
 
 			void serverExitRequest(const char* server);
 
 			int run();
+			void stop()
+				{m_stop=1;}
 
 		private:
 			Parameters m_params;
 			SocketDatagram socket_in;
 			SocketDatagram socket_out;
 			EventHandler& m_handler;
+			volatile bool m_stop;
 		};
 	}
 

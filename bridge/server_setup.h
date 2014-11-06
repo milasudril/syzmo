@@ -11,8 +11,10 @@ namespace SyZmO
 	{
 	struct ServerSetup
 		{
-		uint16_t port_client;
-		uint16_t port_server;
+		static const uint32_t STARTUP_BROADCAST=0x1;
+		uint32_t flags;
+		uint16_t port_in;
+		uint16_t port_out;
 		};
 	}
 

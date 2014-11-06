@@ -4,15 +4,15 @@ target[name[syzmo_server] type[application]]
 #endif
 
 #include "server.h"
-#include <cstdio>
+//#include "../configfile.h"
 
 int main()
 	{
-	SyZmO::Server::Parameters params;
+	SyZmO::ServerSetup params;
+	
 	params.port_out=49152;
 	params.port_in=params.port_out+1;
-	params.flags=SyZmO::Server::Parameters::STARTUP_BROADCAST
-		|SyZmO::Server::Parameters::SHUTDOWN_BROADCAST;
+	params.flags=SyZmO::ServerSetup::STARTUP_BROADCAST;
 
 	SyZmO::Server server(params);
 	server.run();

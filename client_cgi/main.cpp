@@ -23,6 +23,12 @@ void keywordProcess(SyZmO::Client& client,const char* word)
 		client.run();
 		}
 	else
+	if(strcmp(word,"setup_get")==0)
+		{
+		client.serverSetupGetRequest("127.0.0.1");
+		client.run();
+		}
+	else
 		{printf("<p class=\"error\">Unknown keyword: <code>%s</code></p>",word);}
 	}
 

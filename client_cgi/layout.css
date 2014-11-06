@@ -24,6 +24,7 @@ table{width:75%;margin-left:1.75em;border-collapse: collapse;border-radius:8px;}
 th{border-bottom: 1px solid;}
 td{padding-right:0.5em;border-bottom: 1px solid;}
 td.number{text-align:right;}
+th.transpose{text-align:left;}
 
 ul {
     list-style: none;
