@@ -35,6 +35,7 @@ namespace SyZmO
 			void deviceNameRequest(const char* server,uint32_t id);
 			void connectionOpenRequest(const char* server,uint32_t device_id);
 			void connectionCloseRequest(const char* server,uint32_t device_id);
+			void serverHostnameRequest(const char* server);
 
 			void serverExitRequest(const char* server);
 

@@ -86,6 +86,14 @@ void SyZmO::Client::connectionCloseRequest(const char* server,uint32_t device_id
 	MessageCtrl msg_out(req);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
+	
+void SyZmO::Client::serverHostnameRequest(const char* server)
+	{
+	MessageCtrl::ServerHostnameRequest req;
+	MessageCtrl msg_out(req);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
+	
 
 int SyZmO::Client::run()
 	{
@@ -94,6 +102,7 @@ int SyZmO::Client::run()
 	bool running=1;
 	while(running)
 		{
+		memset(&msg,0,sizeof(msg));
 		socket_in.receive(&msg,sizeof(msg),source);
 		if(socket_in.recvTimeout())
 			{
@@ -137,16 +146,19 @@ int SyZmO::Client::run()
 
 				case MessageCtrl::DeviceNameResponse::ID:
 					{
-					const MessageCtrl::DeviceNameResponse* msg_in
-						=(const MessageCtrl::DeviceNameResponse*)msg.data;
+					MessageCtrl::DeviceNameResponse* msg_in
+						=(MessageCtrl::DeviceNameResponse*)msg.data;
+					msg_in->name[MessageCtrl::DeviceNameResponse::NAME_LENGTH-1]=0;
 					running=m_handler.deviceName(*this,source,*msg_in);
 					}
 					break;
 
 				case MessageCtrl::ConnectionOpenResponsePrivate::ID:
 					{
-					const MessageCtrl::ConnectionOpenResponsePrivate* msg_in
-						=(const MessageCtrl::ConnectionOpenResponsePrivate*)msg.data;
+					MessageCtrl::ConnectionOpenResponsePrivate* msg_in
+						=(MessageCtrl::ConnectionOpenResponsePrivate*)msg.data;
+					msg_in->name[MessageCtrl::ConnectionOpenResponsePrivate
+						::NAME_LENGTH-1]=0;
 					running=m_handler.connectionOpened(*this,source,*msg_in);
 					}
 					break;
@@ -172,6 +184,17 @@ int SyZmO::Client::run()
 					const MessageCtrl::ConnectionCloseResponsePublic* msg_in
 						=(const MessageCtrl::ConnectionCloseResponsePublic*)msg.data;
 					running=m_handler.connectionClosed(*this,source,*msg_in);
+					}
+					break;
+					
+					
+				case MessageCtrl::ServerHostnameResponse::ID:
+					{
+					MessageCtrl::ServerHostnameResponse* msg_in
+						=(MessageCtrl::ServerHostnameResponse*)msg.data;
+					msg_in->hostname[MessageCtrl::ServerHostnameResponse
+						::HOSTNAME_LENGTH-1]=0;
+					running=m_handler.serverHostname(*this,source,*msg_in);
 					}
 					break;
 				}

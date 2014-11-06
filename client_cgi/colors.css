@@ -1,2 +1,14 @@
-body{background-color:rgb(255,255,255);}
+@media screen
+  {
+body{background-color:rgb(0,0,0);}
 .error{color:rgb(255,0,0)}
+#content{background-color:rgb(48,64,0);}
+#menu{background-color:rgb(64,64,0);}
+table{background-color:rgb(0,64,0);box-shadow: 0px 0px 4px 4px rgb(0,64,0)}
+p,td,h1,h2,h3,th,li{color:rgb(170,170,170);}
+td,th{border-color:rgb(85,85,85);}
+a{color:rgb(255,0,255);}
+    li:before{
+        color: rgb(192,255,0); /* or whatever color you prefer */
+    }
+  }

@@ -8,16 +8,13 @@ target[name[syzmo_client_cgi.exe] type[application] platform[;Windows]]
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <windows.h>
 
 void keywordProcess(SyZmO::Client& client,const char* word)
 	{
 	if(strcmp(word,"hostname")==0)
 		{
-		char buffer[MAX_COMPUTERNAME_LENGTH + 1];
-		DWORD n=MAX_COMPUTERNAME_LENGTH + 1;
-		GetComputerName(buffer,&n);
-		printf("%s",buffer);
+		client.serverHostnameRequest("127.0.0.1");
+		client.run();
 		}
 	else
 	if(strcmp(word,"devices")==0)

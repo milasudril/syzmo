@@ -1,0 +1,10 @@
+body
+	{
+	font-size:16px;
+	}
+
+h1{font-size:1.3em;line-height:1.25em;margin-bottom:2.3ex;margin-top:3.5ex;}
+h2{font-size:1.1em;line-height:1.25em;margin-bottom:1.5ex;margin-top:3.25ex;}
+h3{font-size:1.0em;line-height:1.25em;margin-bottom:1.5ex;margin-top:3.25ex;}
+h4,th,label{font-size:1.0em;line-height:1.25em}
+h4{display:inline-block;margin-bottom:0ex;margin-top:1.5ex;}

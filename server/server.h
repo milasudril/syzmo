@@ -34,17 +34,21 @@ namespace SyZmO
 			~Server();
 			
 			void midiMessageSend(const char* client,uint32_t dev_id,MessageMidi msg);
+			void isAliveRequest(const char* client);
 			void deviceCountSend(const char* client);
 			void deviceNameSend(const char* client,uint32_t dev_id);
 			void clientConnect(const char* client,uint32_t dev_id);
 			void clientDisconnect(const char* client,uint32_t dev_id);
-			void isAliveRequest(const char* client);
+			
+			void hostnameSend(const char* client);
+			
 			
 			void connectionsIsAliveRequest();
 			void connectionsIsAlive(const char* server);
-			
-			
+
 			int run();
+			void stop()
+				{running=0;}
 
 		private:
 			Parameters m_params;
@@ -52,6 +56,7 @@ namespace SyZmO
 			SocketDatagram socket_out;
 			size_t n_devs;
 			Connection** connections;
+			bool running;
 		};
 	}
 

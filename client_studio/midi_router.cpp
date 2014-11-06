@@ -14,10 +14,12 @@ SyZmO::ClientStudio::MidiRouter::MidiRouter(Herbs::LogWriter& writer
 	{
 	activate();
 	pump.sampleRateSet(sampleRateGet());
+	pump_thread=nullptr;
 	}
 
 SyZmO::ClientStudio::MidiRouter::~MidiRouter()
 	{
+	pumpStop();
 	deactivate();
 	auto ptr=connections.begin();
 	while(ptr!=connections.end())
@@ -100,19 +102,24 @@ void SyZmO::ClientStudio::MidiRouter::connectionAdd(const char* name
 	,const char* server,uint32_t device_id)
 	{
 	deactivate();
-	auto connection=new Connection(*this,name,server,device_id);
-	auto ptr=connections.begin();
-	while(ptr!=connections.end())
+	try
 		{
-		if(*ptr==nullptr)
+		auto connection=new Connection(*this,name,server,device_id);
+		auto ptr=connections.begin();
+		while(ptr!=connections.end())
 			{
-			*ptr=connection;
-			activate();
-			return;
+			if(*ptr==nullptr)
+				{
+				*ptr=connection;
+				activate();
+				return;
+				}
+			++ptr;
 			}
-		++ptr;
+		connections.append(connection);
 		}
-	connections.append(connection);
+	catch(...)
+		{printf("(!) Could not create a port %s/%s\n",server,name);}
 	activate();
 	}
 
@@ -159,12 +166,18 @@ void SyZmO::ClientStudio::MidiRouter::connectionRemove(const char* server
 
 void SyZmO::ClientStudio::MidiRouter::pumpStop()
 	{
-	pump.stop();
-	delete pump_thread;
+	if(pump_thread!=nullptr)
+		{
+		pump.eventsFlush();
+		pump.stop();
+		delete pump_thread;
+		pump_thread=nullptr;
+		}
 	}
 
 void SyZmO::ClientStudio::MidiRouter::pumpStart()
 	{
+	pumpStop();
 	pump.start();
 	pump_thread=new Herbs::Thread(pump);
 	}

@@ -1,13 +1,10 @@
 #ifdef __WAND__
 target[name[event_handler.o] type[object]]
 #endif
-
 #include "event_handler.h"
 #include "../client/client.h"
-
 #include <cstdio>
 #include <algorithm>
-
 
 SyZmO::ClientCgi::EventHandler::EventHandler()
 	{}
@@ -49,7 +46,6 @@ bool SyZmO::ClientCgi::EventHandler::deviceName(Client& client
 	{
 	printf("<tr><td class=\"number\">%u</td><td>%s</td><td>%s</td></tr>\n"
 		,message.device_id,message.name,dev_status[std::min(message.status,3u)]);
-
 	if(message.device_id==dev_count-1)
 		{
 		printf("</table>\n");
@@ -59,41 +55,32 @@ bool SyZmO::ClientCgi::EventHandler::deviceName(Client& client
 	}
 
 bool SyZmO::ClientCgi::EventHandler::connectionOpened(Client& client
-	,const char* server
-	,const MessageCtrl::ConnectionOpenResponsePrivate& message)
-	{
-	return 1;
-	}
+	,const char* server,const MessageCtrl::ConnectionOpenResponsePrivate& message)
+	{return 1;}
 
 bool SyZmO::ClientCgi::EventHandler::connectionOpened(Client& client
-	,const char* server
-	,const MessageCtrl::ConnectionOpenResponsePublic& message)
-	{
-	return 1;
-	}
+	,const char* server,const MessageCtrl::ConnectionOpenResponsePublic& message)
+	{return 1;}
 
 bool SyZmO::ClientCgi::EventHandler::connectionClosed(Client& client
-	,const char* server
-	,const MessageCtrl::ConnectionCloseResponsePrivate& message)
-	{
-	return 1;
-	}
+	,const char* server,const MessageCtrl::ConnectionCloseResponsePrivate& message)
+	{return 1;}
 
 bool SyZmO::ClientCgi::EventHandler::connectionClosed(Client& client
-	,const char* server
-	,const MessageCtrl::ConnectionCloseResponsePublic& message)
+	,const char* server,const MessageCtrl::ConnectionCloseResponsePublic& message)
+	{return 1;}
+
+bool SyZmO::ClientCgi::EventHandler::serverHostname(Client& client,const char* server
+	,const MessageCtrl::ServerHostnameResponse& message)
 	{
-	return 1;
+	printf("%s",message.hostname);
+	return 0;
 	}
 
 bool SyZmO::ClientCgi::EventHandler::serverStartup(Client& client
 	,const char* server)
-	{
-	return 1;
-	}
+	{return 1;	}
 
 bool SyZmO::ClientCgi::EventHandler::serverShutdown(Client& client
 	,const char* server)
-	{
-	return 1;
-	}
+	{return 1;}

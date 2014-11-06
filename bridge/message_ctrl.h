@@ -65,7 +65,8 @@ namespace SyZmO
 		struct DeviceNameResponse
 			{
 			static const uint32_t ID=6;
-			char name[32];
+			static const uint32_t NAME_LENGTH=40;
+			char name[NAME_LENGTH];
 			uint32_t device_id;
 			uint32_t status;
 			static const uint32_t STATUS_READY=0;
@@ -82,7 +83,8 @@ namespace SyZmO
 		struct ConnectionOpenResponsePrivate
 			{
 			static const uint32_t ID=8;
-			char name[32];
+			static const uint32_t NAME_LENGTH=40;
+			char name[NAME_LENGTH];
 			uint32_t device_id;
 			uint32_t status;
 			static const uint32_t STATUS_OK=0;
@@ -117,41 +119,55 @@ namespace SyZmO
 			static const uint32_t ID=12;
 			uint32_t device_id;
 			};
+			
+			
+		struct ServerHostnameRequest
+			{
+			static const uint32_t ID=13;
+			};
+			
+		struct ServerHostnameResponse
+			{
+			static const uint32_t ID=14;
+			static const uint32_t HOSTNAME_LENGTH=48;
+			char hostname[HOSTNAME_LENGTH];
+			};
 
 		struct ServerSetupRequest
 			{
-			static const uint32_t ID=13;
+			static const uint32_t ID=15;
 			uint32_t flags;
 			static const uint32_t PORT_CLIENT_SET=0x1;
 			static const uint32_t PORT_SERVER_SET=0x2;
-			static const uint32_t TIME_SET=0x4;
-
+			
 			ServerSetup setup;
 			};
 
 		struct ServerSetupResponse
 			{
-			static const uint32_t ID=14;
+			static const uint32_t ID=16;
 			ServerSetup setup;
 			};
+	
 
+	
 		struct ServerStartupResponse
-			{static const uint32_t ID=15;};
-
-		struct ServerExitRequest
-			{static const uint32_t ID=16;};
-
-		struct ServerExitResponse
 			{static const uint32_t ID=17;};
 
-		struct ServerRestartRequest
+		struct ServerExitRequest
 			{static const uint32_t ID=18;};
 
-		struct ServerShutdownRequest
+		struct ServerExitResponse
 			{static const uint32_t ID=19;};
 
-		struct ServerRebootRequest
+		struct ServerRestartRequest
 			{static const uint32_t ID=20;};
+
+		struct ServerShutdownRequest
+			{static const uint32_t ID=21;};
+
+		struct ServerRebootRequest
+			{static const uint32_t ID=22;};
 
 		private:
 			void valuesSet(uint32_t length,const void* vals);

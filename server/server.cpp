@@ -7,6 +7,8 @@ target[name[server.o] type[object]]
 #include "../bridge/socket_datagram.h"
 #include "../bridge/message_ctrl.h"
 
+#include <windows.h>
+
 SyZmO::Server::Server(const Parameters& params):
 	m_params(params)
 	{
@@ -167,6 +169,17 @@ void SyZmO::Server::isAliveRequest(const char* client)
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
 	
+void SyZmO::Server::hostnameSend(const char* client)
+	{
+	MessageCtrl::ServerHostnameResponse resp;
+	DWORD n=MessageCtrl::ServerHostnameResponse::HOSTNAME_LENGTH;
+	memset(resp.hostname,0,n*sizeof(char));
+	GetComputerName(resp.hostname,&n);
+	
+	MessageCtrl msg_ret(resp);
+	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+	}
+	
 void SyZmO::Server::connectionsIsAlive(const char* client)
 	{
 	Connection** ptr=connections;
@@ -188,14 +201,12 @@ int SyZmO::Server::run()
 	{
 	MessageCtrl msg;
 	char source[SyZmO::SocketDatagram::ADDRBUFF_LENGTH];
-	bool running=1;
+	running=1;
 	while(running)
 		{
 		socket_in.receive(&msg,sizeof(msg),source);
 		if(socket_in.recvTimeout())
-			{
-			connectionsIsAliveRequest();
-			}
+			{connectionsIsAliveRequest();}
 		
 		if(msg.validIs())
 			{
@@ -248,8 +259,9 @@ int SyZmO::Server::run()
 					}
 					break;
 
-				case MessageCtrl::ServerExitRequest::ID:
-					return 0;
+				case MessageCtrl::ServerHostnameRequest::ID:
+					hostnameSend(source);
+					break;
 				}
 			}
 		}

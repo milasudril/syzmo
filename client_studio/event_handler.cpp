@@ -95,3 +95,9 @@ bool SyZmO::ClientStudio::EventHandler::serverShutdown(Client& client
 	m_router.connectionsRemove(server);
 	return 1;
 	}
+
+bool SyZmO::ClientStudio::EventHandler::serverHostname(Client& client
+	,const char* server	,const MessageCtrl::ServerHostnameResponse& message)
+	{
+	return 1;
+	}
