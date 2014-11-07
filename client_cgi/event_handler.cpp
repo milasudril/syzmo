@@ -6,7 +6,7 @@ target[name[event_handler.o] type[object]]
 #include <cstdio>
 #include <algorithm>
 
-SyZmO::ClientCgi::EventHandler::EventHandler()
+SyZmO::ClientCgi::EventHandler::EventHandler():errormode_cdata(0)
 	{}
 
 void SyZmO::ClientCgi::EventHandler::clientStartup(Client& client
@@ -18,7 +18,10 @@ void SyZmO::ClientCgi::EventHandler::clientShutdown(Client& client)
 
 bool SyZmO::ClientCgi::EventHandler::timeout(Client& client)
 	{
-	printf("<p class=\"error\">Server did not respond</p>");
+	if(errormode_cdata)
+		{printf("Server did not respond in time");}
+	else
+		{printf("<p class=\"error\">Server did not respond in time</p>");}
 	return 0;
 	}
 

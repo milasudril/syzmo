@@ -45,9 +45,13 @@ namespace SyZmO
 
 				bool serverStartup(Client& client,const char* server);
 				bool serverShutdown(Client& client,const char* server);
+				
+				void errormode(bool mode)
+					{errormode_cdata=mode;}
 
 			private:
 				size_t dev_count;
+				bool errormode_cdata;
 			};
 		}
 	}

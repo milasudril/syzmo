@@ -9,23 +9,27 @@ target[name[syzmo_client_cgi.exe] type[application] platform[;Windows]]
 #include <cstdio>
 #include <cstring>
 
-void keywordProcess(SyZmO::Client& client,const char* word)
+void keywordProcess(SyZmO::ClientCgi::EventHandler& handler
+	,SyZmO::Client& client,const char* word)
 	{
 	if(strcmp(word,"hostname")==0)
 		{
 		client.serverHostnameRequest("127.0.0.1");
+		handler.errormode(1);
 		client.run();
 		}
 	else
 	if(strcmp(word,"devices")==0)
 		{
 		client.deviceCountRequest("127.0.0.1");
+		handler.errormode(0);
 		client.run();
 		}
 	else
 	if(strcmp(word,"setup_get")==0)
 		{
 		client.serverSetupGetRequest("127.0.0.1");
+		handler.errormode(0);
 		client.run();
 		}
 	else
@@ -70,7 +74,7 @@ int main()
 			{
 			word.terminate();
 			if(*word.begin()=='$')
-				{keywordProcess(client,word.begin()+1);}
+				{keywordProcess(eh,client,word.begin()+1);}
 			else
 				{printf("%s",word.begin());}
 			putchar(ch_in);
