@@ -1,5 +1,6 @@
 #ifdef __WAND__
 target[name[server_setup.h] type[include]]
+dependency[server_setup.o]
 #endif
 
 #ifndef SYZMO_SERVERSETUP_H
@@ -16,6 +17,8 @@ namespace SyZmO
 		uint16_t port_in;
 		uint16_t port_out;
 		};
+		
+	void load(ServerSetup& setup);
 	}
 
 #endif

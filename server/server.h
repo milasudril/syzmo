@@ -48,6 +48,7 @@ namespace SyZmO
 			SocketDatagram socket_out;
 			size_t n_devs;
 			Connection** connections;
+			uint32_t time_activity;
 			volatile bool running;
 		};
 	}

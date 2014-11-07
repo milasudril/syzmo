@@ -1,5 +1,5 @@
 #ifdef __WAND__
-target[name[server.o] type[object]]
+target[name[server.o] type[object] dependency[winmm;external]]
 #endif
 
 #include "server.h"
@@ -12,6 +12,7 @@ target[name[server.o] type[object]]
 SyZmO::Server::Server(const ServerSetup& params):
 	m_params(params)
 	{
+	timeBeginPeriod(1);
 	n_devs=MidiOut::deviceCount();
 	connections=new Connection*[n_devs];
 	for(size_t k=0;k<n_devs;++k)
@@ -27,6 +28,7 @@ SyZmO::Server::Server(const ServerSetup& params):
 		socket_out.send(&msg,sizeof(msg),m_params.port_out,"255.255.255.255");
 		socket_out.broadcastDisable();
 		}
+	time_activity=timeGetTime();
 	}
 
 SyZmO::Server::~Server()
@@ -43,6 +45,7 @@ SyZmO::Server::~Server()
 			{delete connections[k];}
 		}
 	delete[] connections;
+	timeEndPeriod(1);
 	}
 
 
@@ -195,10 +198,7 @@ void SyZmO::Server::connectionsIsAlive(const char* client)
 		if(*ptr!=NULL)
 			{
 			if((*ptr)->clientMatch(client))
-				{
-				delete *ptr;
-				*ptr=NULL;
-				}
+				{(*ptr)->isAlive();}
 			}
 		++ptr;
 		}
@@ -214,7 +214,8 @@ int SyZmO::Server::run()
 	while(running)
 		{
 		socket_in.receive(&msg,sizeof(msg),source);
-		if(socket_in.recvTimeout())
+		uint32_t time_now=timeGetTime();
+		if(socket_in.recvTimeout() || time_now-time_activity >3000)
 			{connectionsIsAliveRequest();}
 		
 		if(msg.validIs())
@@ -225,6 +226,7 @@ int SyZmO::Server::run()
 					{
 					const MessageCtrl::Midi* m=(const MessageCtrl::Midi*)msg.data;
 					midiMessageSend(source,m->device_id,m->midi);
+					time_activity=timeGetTime();
 					};
 					break;
 
@@ -233,11 +235,13 @@ int SyZmO::Server::run()
 					MessageCtrl::IsAliveResponse nop;
 					MessageCtrl msg_ret(nop);
 					socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,source);
+					time_activity=timeGetTime();
 					}
 					break;
 					
 				case MessageCtrl::IsAliveResponse::ID:
 					connectionsIsAlive(source);
+					time_activity=timeGetTime();
 					break;
 
 				case MessageCtrl::DeviceCountRequest::ID:
@@ -257,6 +261,7 @@ int SyZmO::Server::run()
 					const MessageCtrl::ConnectionOpenRequest* msg_in
 						=(const MessageCtrl::ConnectionOpenRequest*)msg.data;
 					clientConnect(source,msg_in->device_id);
+					time_activity=timeGetTime();
 					}
 					break;
 

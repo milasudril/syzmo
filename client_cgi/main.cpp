@@ -37,9 +37,17 @@ int main()
 	{
 	SyZmO::Client::Parameters params;
 	params.port_in=49152;
-	params.port_out=params.port_in+1;
+	params.port_out=49153;
 	params.flags=0;
 	strcpy(params.server_ip,"127.0.0.1");
+		
+		{
+		SyZmO::ServerSetup params_server;
+		SyZmO::load(params_server);
+		params.port_in=params_server.port_out;
+		params.port_out=params_server.port_in;
+		}
+		
 	SyZmO::ClientCgi::EventHandler eh;
 	SyZmO::Client client(params,eh);
 

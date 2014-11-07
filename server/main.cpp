@@ -5,17 +5,16 @@ target[name[syzmo_server] type[application]]
 
 #include "server.h"
 #include "../configfile.h"
+#include "../buffer.h"
 
 int main()
 	{
 	SyZmO::ServerSetup params;
-	
 	params.port_out=49152;
 	params.port_in=params.port_out+1;
 	params.flags=SyZmO::ServerSetup::STARTUP_BROADCAST;
 
-	SyZmO::ConfigFile config("syzmo_config_server.txt");
-	
+	SyZmO::load(params);
 	SyZmO::Server server(params);
 	server.run();
 	return 0;

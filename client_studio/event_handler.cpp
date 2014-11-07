@@ -6,7 +6,6 @@ target[name[event_handler.o] type[object]]
 #include "midi_router.h"
 #include "../client/client.h"
 
-
 SyZmO::ClientStudio::EventHandler::EventHandler(MidiRouter& router):
 	m_router(router)
 	{}
@@ -95,7 +94,7 @@ bool SyZmO::ClientStudio::EventHandler::serverShutdown(Client& client
 	m_router.connectionsRemove(server);
 	return 1;
 	}
-	
+
 
 
 bool SyZmO::ClientStudio::EventHandler::serverHostname(Client& client
@@ -103,7 +102,7 @@ bool SyZmO::ClientStudio::EventHandler::serverHostname(Client& client
 	{
 	return 1;
 	}
-	
+
 bool SyZmO::ClientStudio::EventHandler::serverSetupGet(Client& client
 	,const char* server	,const MessageCtrl::ServerSetupGetResponse& message)
 	{
