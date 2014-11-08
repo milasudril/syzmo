@@ -39,9 +39,16 @@ namespace SyZmO
 			void connectionsIsAliveRequest();
 			void connectionsIsAlive(const char* server);
 
+			static const int RUN_STATUS_CONTINUE=0;
+			static const int RUN_STATUS_SHUTDOWN=1;
+			static const int RUN_STATUS_REBOOT=2;
+			
 			int run();
+			
 			void stop()
 				{running=0;}
+				
+
 
 		private:
 			ServerSetup& m_params;

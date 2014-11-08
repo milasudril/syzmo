@@ -15,19 +15,25 @@
 <ul id="menu">
 <li><a href="$!SCRIPT_NAME?view=info">Information</a></li>
 <li><a href="$!SCRIPT_NAME?view=log">Log file</a></li>
-<li><a href="$!SCRIPT_NAME?view=setup">System setup</a></li>
+<li><a href="$!SCRIPT_NAME?view=actions">Server actions</a></li>
 </ul>
 
 <div id="content">
-<h2>Server setup</h2>
+<h2>Server actions</h2>
+<h3>System setup</h3>
 <form action="$!SCRIPT_NAME" method="get">
-<input type="hidden" name="setup_set" value="yes">
+<input type="hidden" name="action" value="Setup">
+<input type="hidden" name="view" value="info">
 $input_begin
 $setup_get
 $input_end
 <p><input type="submit" value="Apply"> <input type="reset" value="Reset"></p>
 </form>
 
+<h3>Server control</h3>
+<form action="$!SCRIPT_NAME" method="get">
+<p><input type="submit" name="action" value="Shutdown"> <input type="submit" name="action" value="Reboot"></p>
+</form>
 </div>
 </body>
 </html>

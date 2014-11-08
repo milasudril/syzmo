@@ -30,12 +30,19 @@ void SyZmO::ClientCgi::load(Parameters& params)
 			params.record_end=atol(value.begin());
 			}
 		else
-		if(strcmp(key.begin(),"setup_set")==0)
+		if(strcmp(key.begin(),"action")==0)
 			{
-			if(strcmp(value.begin(),"yes")==0)
-				{params.setup_set=1;}
+			if(strcmp(value.begin(),"Normal")==0)
+				{params.action=Parameters::ACTION_NORMAL;}
 			else
-				{params.setup_set=0;}
+			if(strcmp(value.begin(),"Setup")==0)
+				{params.action=Parameters::ACTION_SETUP;}
+			else
+			if(strcmp(value.begin(),"Shutdown")==0)
+				{params.action=Parameters::ACTION_SHUTDOWN;}
+			else
+			if(strcmp(value.begin(),"Reboot")==0)
+				{params.action=Parameters::ACTION_REBOOT;}
 			}
 		}
 	}

@@ -164,14 +164,11 @@ namespace SyZmO
 		struct ServerExitResponse
 			{static const uint32_t ID=20;};
 
-		struct ServerRestartRequest
+		struct ServerShutdownRequest
 			{static const uint32_t ID=21;};
 
-		struct ServerShutdownRequest
-			{static const uint32_t ID=22;};
-
 		struct ServerRebootRequest
-			{static const uint32_t ID=23;};
+			{static const uint32_t ID=22;};
 
 		private:
 			void valuesSet(uint32_t length,const void* vals);

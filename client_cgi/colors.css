@@ -9,5 +9,7 @@
 	h1,h2,h3{color:rgb(170,170,255)}
 	td,th{border-color:rgb(85,85,85);}
 	a{color:rgb(255,192,0);}
-	li:before{color: rgb(0,0,255); /* or whatever color you prefer */}
+	li:before{color: rgb(0,0,255);}
+	input{background-color:rgb(64,0,128);color:rgb(170,170,255);}
+	input:focus,input:active{border-color:rgb(255,192,0);}
 	}

@@ -101,7 +101,23 @@ void SyZmO::Client::serverSetupSetRequest(const char* server,const ServerSetup& 
 	MessageCtrl msg_out(req);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
+	
+void SyZmO::Client::serverShutdownRequest(const char* server)
+	{
+	MessageCtrl::ServerShutdownRequest req;
+	MessageCtrl msg_out(req);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
+	
+void SyZmO::Client::serverRebootRequest(const char* server)
+	{
+	MessageCtrl::ServerRebootRequest req;
+	MessageCtrl msg_out(req);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
 
+
+	
 int SyZmO::Client::run()
 	{
 	MessageCtrl msg;

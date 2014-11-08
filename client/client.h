@@ -38,6 +38,8 @@ namespace SyZmO
 			void serverHostnameRequest(const char* server);
 			void serverSetupGetRequest(const char* server);
 			void serverSetupSetRequest(const char* server,const ServerSetup& setup);
+			void serverShutdownRequest(const char* server);
+			void serverRebootRequest(const char* server);
 
 
 			int run();

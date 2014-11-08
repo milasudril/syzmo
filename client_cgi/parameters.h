@@ -15,14 +15,18 @@ namespace SyZmO
 		struct Parameters
 			{
 			Parameters():view(16){}
-			
+
 			Buffer view;
 			size_t record_begin;
 			size_t record_end;
-			
-			bool setup_set;
+
+			size_t action;
+			static const size_t ACTION_NORMAL=0;
+			static const size_t ACTION_SETUP=1;
+			static const size_t ACTION_SHUTDOWN=2;
+			static const size_t ACTION_REBOOT=3;
 			};
-			
+
 		void load(Parameters& params);
 		}
 	}

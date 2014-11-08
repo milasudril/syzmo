@@ -305,9 +305,15 @@ int SyZmO::Server::run()
 						=(const MessageCtrl::ServerSetupSetRequest*)msg.data;
 					setupSet(source,msg_in->setup);
 					}
-					return 0;
+					return RUN_STATUS_CONTINUE;
+				
+				case MessageCtrl::ServerShutdownRequest::ID:
+					return RUN_STATUS_SHUTDOWN;
+					
+				case MessageCtrl::ServerRebootRequest::ID:
+					return RUN_STATUS_REBOOT;
 				}
 			}
 		}
-	return 0;
+	return RUN_STATUS_CONTINUE;
 	}
