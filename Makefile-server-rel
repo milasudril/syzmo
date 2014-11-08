@@ -1,0 +1,77 @@
+# Makefile generated 2014-11-8 20:56
+#
+# Host:   x86_64, GNU/Linux
+# Target: x86, Windows
+# Shell:  /bin/bash
+
+all: __wand_targets_rel_win __wand_targets_rel_win/bridge __wand_targets_rel_win/exception_missing.o __wand_targets_rel_win/buffer.o __wand_targets_rel_win/configfile_out.o __wand_targets_rel_win/configfile_in.o __wand_targets_rel_win/bridge/server_setup.o __wand_targets_rel_win/bridge/message_ctrl.o __wand_targets_rel_win/bridge/netresource.o __wand_targets_rel_win/bridge/socket_datagram.o __wand_targets_rel_win/client __wand_targets_rel_win/client/client.o __wand_targets_rel_win/client_cgi __wand_targets_rel_win/client_cgi/event_handler.o __wand_targets_rel_win/client_cgi/querystring.o __wand_targets_rel_win/client_cgi/parameters.o __wand_targets_rel_win/client_cgi/template_reader.o __wand_targets_rel_win/client_cgi/syzmo_client_cgi.exe __wand_targets_rel_win/server __wand_targets_rel_win/server/midi_out.o __wand_targets_rel_win/server/server.o __wand_targets_rel_win/server/connection.o __wand_targets_rel_win/server/syzmo_server.exe
+
+__wand_targets_rel_win: | .
+	mkdir "__wand_targets_rel_win"
+
+__wand_targets_rel_win/bridge: | bridge
+	mkdir "__wand_targets_rel_win/bridge"
+
+__wand_targets_rel_win/exception_missing.o: exception_missing.cpp exception_missing.h
+	g++ "exception_missing.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/exception_missing.o"
+
+__wand_targets_rel_win/buffer.o: buffer.cpp buffer.h
+	g++ "buffer.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/buffer.o"
+
+__wand_targets_rel_win/configfile_out.o: configfile_out-win32.cpp exception_missing.h buffer.h configfile_out.h paramwriter.h
+	g++ "configfile_out-win32.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/configfile_out.o"
+
+__wand_targets_rel_win/configfile_in.o: configfile_in-win32.cpp exception_missing.h buffer.h configfile_in.h paramreader.h
+	g++ "configfile_in-win32.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/configfile_in.o"
+
+__wand_targets_rel_win/bridge/server_setup.o: bridge/server_setup.cpp configfile_out.h paramwriter.h exception_missing.h configfile_in.h paramreader.h buffer.h bridge/server_setup.h bridge/inttypes.h
+	g++ "bridge/server_setup.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/bridge/server_setup.o"
+
+__wand_targets_rel_win/bridge/message_ctrl.o: bridge/message_ctrl.cpp bridge/message_ctrl.h bridge/message_midi.h configfile_out.h paramwriter.h exception_missing.h configfile_in.h paramreader.h buffer.h bridge/server_setup.h bridge/inttypes.h
+	g++ "bridge/message_ctrl.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/bridge/message_ctrl.o"
+
+__wand_targets_rel_win/bridge/netresource.o: bridge/netresource.cpp bridge/netresource.h
+	g++ "bridge/netresource.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/bridge/netresource.o"
+
+__wand_targets_rel_win/bridge/socket_datagram.o: bridge/socket_datagram-win32.cpp exception_missing.h bridge/netresource.h bridge/socket_datagram.h bridge/inttypes.h
+	g++ "bridge/socket_datagram-win32.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/bridge/socket_datagram.o"
+
+__wand_targets_rel_win/client: | client
+	mkdir "__wand_targets_rel_win/client"
+
+__wand_targets_rel_win/client/client.o: client/client.cpp bridge/message_ctrl.h bridge/message_midi.h configfile_out.h paramwriter.h configfile_in.h paramreader.h buffer.h bridge/server_setup.h client/event_handler.h client/client.h exception_missing.h bridge/netresource.h bridge/socket_datagram.h bridge/inttypes.h
+	g++ "client/client.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/client/client.o"
+
+__wand_targets_rel_win/client_cgi: | client_cgi
+	mkdir "__wand_targets_rel_win/client_cgi"
+
+__wand_targets_rel_win/client_cgi/event_handler.o: client_cgi/event_handler.cpp client/client.h bridge/netresource.h bridge/socket_datagram.h client_cgi/event_handler.h client/event_handler.h bridge/message_ctrl.h bridge/message_midi.h configfile_out.h paramwriter.h exception_missing.h configfile_in.h paramreader.h buffer.h bridge/server_setup.h bridge/inttypes.h
+	g++ "client_cgi/event_handler.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/client_cgi/event_handler.o"
+
+__wand_targets_rel_win/client_cgi/querystring.o: client_cgi/querystring.cpp buffer.h exception_missing.h client_cgi/querystring.h paramreader.h
+	g++ "client_cgi/querystring.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/client_cgi/querystring.o"
+
+__wand_targets_rel_win/client_cgi/parameters.o: client_cgi/parameters.cpp exception_missing.h client_cgi/querystring.h paramreader.h client_cgi/parameters.h buffer.h
+	g++ "client_cgi/parameters.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/client_cgi/parameters.o"
+
+__wand_targets_rel_win/client_cgi/template_reader.o: client_cgi/template_reader.cpp buffer.h exception_missing.h client_cgi/template_reader.h
+	g++ "client_cgi/template_reader.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/client_cgi/template_reader.o"
+
+__wand_targets_rel_win/client_cgi/syzmo_client_cgi.exe: client_cgi/main.cpp __wand_targets_rel_win/client_cgi/template_reader.o client_cgi/template_reader.h __wand_targets_rel_win/client_cgi/parameters.o __wand_targets_rel_win/client_cgi/querystring.o client_cgi/querystring.h client_cgi/parameters.h __wand_targets_rel_win/client_cgi/event_handler.o __wand_targets_rel_win/client/client.o client/client.h __wand_targets_rel_win/bridge/socket_datagram.o __wand_targets_rel_win/bridge/netresource.o bridge/netresource.h bridge/socket_datagram.h client_cgi/event_handler.h client/event_handler.h __wand_targets_rel_win/bridge/message_ctrl.o bridge/message_ctrl.h bridge/message_midi.h __wand_targets_rel_win/bridge/server_setup.o __wand_targets_rel_win/configfile_out.o configfile_out.h paramwriter.h __wand_targets_rel_win/configfile_in.o __wand_targets_rel_win/exception_missing.o exception_missing.h configfile_in.h paramreader.h __wand_targets_rel_win/buffer.o buffer.h bridge/server_setup.h bridge/inttypes.h | __wand_targets_rel_win/client_cgi __wand_targets_rel_win/bridge __wand_targets_rel_win __wand_targets_rel_win/client
+	g++ "client_cgi/main.cpp" "__wand_targets_rel_win/client_cgi/template_reader.o" "__wand_targets_rel_win/client_cgi/parameters.o" "__wand_targets_rel_win/client_cgi/querystring.o" "__wand_targets_rel_win/client_cgi/event_handler.o" "__wand_targets_rel_win/client/client.o" "__wand_targets_rel_win/bridge/socket_datagram.o" "__wand_targets_rel_win/bridge/netresource.o" -l"ws2_32" "__wand_targets_rel_win/bridge/message_ctrl.o" "__wand_targets_rel_win/bridge/server_setup.o" "__wand_targets_rel_win/configfile_out.o" "__wand_targets_rel_win/configfile_in.o" "__wand_targets_rel_win/exception_missing.o" "__wand_targets_rel_win/buffer.o"  -O2 -mwindows -Wall -o "__wand_targets_rel_win/client_cgi/syzmo_client_cgi.exe" -s
+
+__wand_targets_rel_win/server: | server
+	mkdir "__wand_targets_rel_win/server"
+
+__wand_targets_rel_win/server/midi_out.o: server/midi_out.cpp exception_missing.h server/midi_out.h bridge/message_midi.h bridge/inttypes.h
+	g++ "server/midi_out.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/server/midi_out.o"
+
+__wand_targets_rel_win/server/server.o: server/server.cpp bridge/message_ctrl.h configfile_out.h paramwriter.h configfile_in.h paramreader.h buffer.h bridge/server_setup.h bridge/netresource.h bridge/socket_datagram.h server/connection.h exception_missing.h server/midi_out.h bridge/message_midi.h bridge/inttypes.h server/server.h
+	g++ "server/server.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/server/server.o"
+
+__wand_targets_rel_win/server/connection.o: server/connection.cpp bridge/message_ctrl.h configfile_out.h paramwriter.h configfile_in.h paramreader.h buffer.h bridge/server_setup.h server/server.h bridge/netresource.h bridge/socket_datagram.h server/connection.h exception_missing.h server/midi_out.h bridge/message_midi.h bridge/inttypes.h
+	g++ "server/connection.cpp" -O2 -Wall -c -o "__wand_targets_rel_win/server/connection.o"
+
+__wand_targets_rel_win/server/syzmo_server.exe: server/main.cpp __wand_targets_rel_win/bridge/message_ctrl.o bridge/message_ctrl.h __wand_targets_rel_win/bridge/server_setup.o __wand_targets_rel_win/configfile_out.o configfile_out.h paramwriter.h __wand_targets_rel_win/configfile_in.o configfile_in.h paramreader.h __wand_targets_rel_win/buffer.o buffer.h bridge/server_setup.h __wand_targets_rel_win/server/connection.o __wand_targets_rel_win/server/server.o server/connection.h __wand_targets_rel_win/server/midi_out.o server/midi_out.h server/server.h bridge/message_midi.h __wand_targets_rel_win/bridge/socket_datagram.o __wand_targets_rel_win/exception_missing.o exception_missing.h __wand_targets_rel_win/bridge/netresource.o bridge/netresource.h bridge/socket_datagram.h bridge/inttypes.h | __wand_targets_rel_win/server __wand_targets_rel_win/bridge __wand_targets_rel_win
+	g++ "server/main.cpp" "__wand_targets_rel_win/bridge/message_ctrl.o" "__wand_targets_rel_win/bridge/server_setup.o" "__wand_targets_rel_win/configfile_out.o" "__wand_targets_rel_win/configfile_in.o" "__wand_targets_rel_win/buffer.o" "__wand_targets_rel_win/server/connection.o" "__wand_targets_rel_win/server/server.o" "__wand_targets_rel_win/server/midi_out.o" -l"winmm" "__wand_targets_rel_win/bridge/socket_datagram.o" "__wand_targets_rel_win/exception_missing.o" "__wand_targets_rel_win/bridge/netresource.o" -l"ws2_32"  -O2 -mwindows -Wall -o "__wand_targets_rel_win/server/syzmo_server.exe" -s
+
