@@ -19,14 +19,15 @@
 </ul>
 
 <div id="content">
-<h2>Server information</h2>
-<h3>Installed devices</h3>
-$devices
-
-<h3>Configuration</h3>
+<h2>Server setup</h2>
+<form action="$!SCRIPT_NAME" method="get">
+<input type="hidden" name="setup_set" value="yes">
+$input_begin
 $setup_get
+$input_end
+<p><input type="submit" value="Apply"> <input type="reset" value="Reset"></p>
+</form>
 
 </div>
-
 </body>
 </html>

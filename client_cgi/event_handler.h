@@ -41,17 +41,28 @@ namespace SyZmO
 					,const MessageCtrl::ServerHostnameResponse& message);
 				bool serverSetupGet(Client& client,const char* server
 					,const MessageCtrl::ServerSetupGetResponse& message);
+				bool serverSetupSet(Client& client,const char* server
+					,const MessageCtrl::ServerSetupSetResponse& message);
+				
 					
 
 				bool serverStartup(Client& client,const char* server);
 				bool serverShutdown(Client& client,const char* server);
 				
-				void errormode(bool mode)
-					{errormode_cdata=mode;}
+				void cdataBegin()
+					{mode_output|=MODE_OUTPUT_CDATA;}
+				void cdataEnd()
+					{mode_output&= ~MODE_OUTPUT_CDATA;}
+				void inputBegin()
+					{mode_output|=MODE_OUTPUT_INPUT;}
+				void inputEnd()
+					{mode_output&= ~MODE_OUTPUT_INPUT;}
 
 			private:
 				size_t dev_count;
-				bool errormode_cdata;
+				uint32_t mode_output;
+				static const uint32_t MODE_OUTPUT_CDATA=1;
+				static const uint32_t MODE_OUTPUT_INPUT=2;
 			};
 		}
 	}

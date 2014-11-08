@@ -108,3 +108,10 @@ bool SyZmO::ClientStudio::EventHandler::serverSetupGet(Client& client
 	{
 	return 1;
 	}
+
+bool SyZmO::ClientStudio::EventHandler::serverSetupSet(Client& client,const char* server
+	,const MessageCtrl::ServerSetupSetResponse& message)
+	{
+	printf("Setup has been changed\n");
+	return 1;
+	}

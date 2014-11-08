@@ -23,6 +23,7 @@ namespace SyZmO
 			public:
 				Connection(MuStudio::Client& studio_client,const char* name
 					,const char* server,uint32_t device_id);
+			//TODO: Send disconnect message to server in dtor
 
 				void eventFirstGet(size_t n_frames)
 					{

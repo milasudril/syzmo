@@ -1,15 +1,16 @@
 #ifdef __WAND__
-target[name[server.o] type[object] dependency[winmm;external]]
+target[name[server.o] type[object] dependency[winmm;external] platform[;Windows]]
 #endif
 
 #include "server.h"
 #include "connection.h"
 #include "../bridge/socket_datagram.h"
 #include "../bridge/message_ctrl.h"
+#include "../bridge/server_setup.h"
 
 #include <windows.h>
 
-SyZmO::Server::Server(const ServerSetup& params):
+SyZmO::Server::Server(ServerSetup& params):
 	m_params(params)
 	{
 	timeBeginPeriod(1);
@@ -189,6 +190,23 @@ void SyZmO::Server::setupGetSend(const char* client)
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
 	
+void SyZmO::Server::setupSet(const char* client,const ServerSetup& setup)
+	{
+	store(setup);
+	MessageCtrl::ServerSetupSetResponse resp;
+	resp.setup=setup;
+	MessageCtrl msg_ret(resp);
+	if(m_params.flags&ServerSetup::STARTUP_BROADCAST)
+		{
+		socket_out.broadcastEnable();
+		socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,"255.255.255.255");
+		socket_out.broadcastDisable(); 
+		}
+	else
+		{socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);}
+	m_params=setup;
+	}
+	
 	
 void SyZmO::Server::connectionsIsAlive(const char* client)
 	{
@@ -280,6 +298,14 @@ int SyZmO::Server::run()
 				case MessageCtrl::ServerSetupGetRequest::ID:
 					setupGetSend(source);
 					break;
+					
+				case MessageCtrl::ServerSetupSetRequest::ID:
+					{
+					const MessageCtrl::ServerSetupSetRequest* msg_in
+						=(const MessageCtrl::ServerSetupSetRequest*)msg.data;
+					setupSet(source,msg_in->setup);
+					}
+					return 0;
 				}
 			}
 		}

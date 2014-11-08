@@ -1,11 +1,11 @@
 #ifdef __WAND__
 target
 	[
-	name[configfile.o] type[object] platform[;Windows]
+	name[configfile_in.o] type[object] platform[;Windows]
 	]
 #endif
 
-#include "configfile.h"
+#include "configfile_in.h"
 #include "buffer.h"
 #include "exception_missing.h"
 #define _WIN32_IE 0x0400
@@ -13,7 +13,7 @@ target
 #include <shlobj.h>
 #include <cstdio>
 
-SyZmO::ConfigFile::ConfigFile(const char* filename)
+SyZmO::ConfigFileIn::ConfigFileIn(const char* filename)
 	{
 	char homedir[MAX_PATH];
 	if(!SHGetSpecialFolderPath(NULL,homedir,CSIDL_APPDATA,TRUE))
@@ -27,7 +27,7 @@ SyZmO::ConfigFile::ConfigFile(const char* filename)
 		{throw ExceptionMissing(__FILE__,__LINE__);}
 	}
 
-bool SyZmO::ConfigFile::paramGet(Buffer& key,Buffer& value)
+bool SyZmO::ConfigFileIn::paramGet(Buffer& key,Buffer& value)
 	{
 	if(feof((FILE*)src))
 		{return 0;}
@@ -75,7 +75,7 @@ bool SyZmO::ConfigFile::paramGet(Buffer& key,Buffer& value)
 	return 1;
 	}
 
-SyZmO::ConfigFile::~ConfigFile()
+SyZmO::ConfigFileIn::~ConfigFileIn()
 	{
 	fclose((FILE*)src);
 	}

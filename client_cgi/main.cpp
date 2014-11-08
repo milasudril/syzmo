@@ -3,86 +3,122 @@ target[name[syzmo_client_cgi.exe] type[application] platform[;Windows]]
 #endif
 
 #include "event_handler.h"
+#include "parameters.h"
+#include "template_reader.h"
+#include "querystring.h"
+
 #include "../client/client.h"
+#include "../bridge/server_setup.h"
 #include "../buffer.h"
-#include <cstdlib>
+#include "../exception_missing.h"
+
 #include <cstdio>
 #include <cstring>
+#include <cstdlib>
 
-void keywordProcess(SyZmO::ClientCgi::EventHandler& handler
-	,SyZmO::Client& client,const char* word)
+class TemplateKeywordProcessor:
+	public SyZmO::ClientCgi::TemplateReader::KeywordProcessor
 	{
-	if(strcmp(word,"hostname")==0)
-		{
-		client.serverHostnameRequest("127.0.0.1");
-		handler.errormode(1);
-		client.run();
-		}
-	else
-	if(strcmp(word,"devices")==0)
-		{
-		client.deviceCountRequest("127.0.0.1");
-		handler.errormode(0);
-		client.run();
-		}
-	else
-	if(strcmp(word,"setup_get")==0)
-		{
-		client.serverSetupGetRequest("127.0.0.1");
-		handler.errormode(0);
-		client.run();
-		}
-	else
-		{printf("<p class=\"error\">Unknown keyword: <code>%s</code></p>",word);}
-	}
-
+	public:
+		TemplateKeywordProcessor(SyZmO::Client& client
+			,SyZmO::ClientCgi::EventHandler& eh
+			,SyZmO::ClientCgi::Parameters& params):
+			m_client(client),m_eh(eh),m_params(params)
+			{}
+			
+		void keywordProcess(const char* word)
+			{
+			if(*word=='!')
+				{printf("%s",getenv(word+1));}
+			else
+			if(strcmp(word,"cdata_begin")==0)
+				{m_eh.cdataBegin();}
+			else
+			if(strcmp(word,"cdata_end")==0)
+				{m_eh.cdataEnd();}
+			else
+			if(strcmp(word,"input_begin")==0)
+				{m_eh.inputBegin();}
+			else
+			if(strcmp(word,"input_end")==0)
+				{m_eh.inputEnd();}
+			else
+			if(strcmp(word,"hostname")==0)
+				{
+				m_client.serverHostnameRequest("127.0.0.1");
+				m_client.run();
+				}
+			else
+			if(strcmp(word,"devices")==0)
+				{
+				m_client.deviceCountRequest("127.0.0.1");
+				m_client.run();
+				}
+			else
+			if(strcmp(word,"setup_get")==0)
+				{
+				m_client.serverSetupGetRequest("127.0.0.1");
+				m_client.run();
+				}
+			else
+				{
+				printf("<p class=\"error\">Unknown keyword: <code>%s</code></p>"
+					,word);
+				}
+			}
+			
+	private:
+		SyZmO::Client& m_client;
+		SyZmO::ClientCgi::EventHandler& m_eh;
+		SyZmO::ClientCgi::Parameters& m_params;
+	};
 
 int main()
 	{
-	SyZmO::Client::Parameters params;
-	params.port_in=49152;
-	params.port_out=49153;
-	params.flags=0;
-	strcpy(params.server_ip,"127.0.0.1");
-		
+	try
 		{
-		SyZmO::ServerSetup params_server;
-		SyZmO::load(params_server);
-		params.port_in=params_server.port_out;
-		params.port_out=params_server.port_in;
-		}
-		
-	SyZmO::ClientCgi::EventHandler eh;
-	SyZmO::Client client(params,eh);
-
-//	const char* args=getenv("QUERY_STRING");
-	FILE* src=fopen("info.html","r");
-	if(src==NULL)
-		{
-		printf("Content-type: text/plain\r\n\r\nFile not found\r\n");
-		return -1;
-		}
-
-	printf("Content-type: text/html\r\n\r\n");
-	SyZmO::Buffer word(16);
-
-	int ch_in;
-	while( (ch_in=getc(src)) != EOF)
-		{
-		if((ch_in>=0 && ch_in<=32) || ch_in=='>' || ch_in=='<' || ch_in=='='
-			|| ch_in=='"' || ch_in=='&' || ch_in==';')
+		SyZmO::Client::Parameters params;
+		params.port_in=49152;
+		params.port_out=49153;
+		params.flags=0;
+		strcpy(params.server_ip,"127.0.0.1");
+			
 			{
-			word.terminate();
-			if(*word.begin()=='$')
-				{keywordProcess(eh,client,word.begin()+1);}
-			else
-				{printf("%s",word.begin());}
-			putchar(ch_in);
-			word.clear();
+			SyZmO::ServerSetup params_server;
+			SyZmO::load(params_server);
+			params.port_in=params_server.port_out;
+			params.port_out=params_server.port_in;
 			}
-		else
-			{word.append(ch_in);}
+			
+		SyZmO::ClientCgi::Parameters params_cgi;
+		params_cgi.record_begin=0;
+		params_cgi.record_end=128;
+		params_cgi.setup_set=0;
+		SyZmO::ClientCgi::load(params_cgi);
+		
+		SyZmO::ClientCgi::EventHandler eh;
+		SyZmO::Client client(params,eh);	
+		
+		if(params_cgi.setup_set)
+			{
+			SyZmO::ServerSetup server_setup;
+			SyZmO::ClientCgi::QueryString qs;
+			SyZmO::load(qs,server_setup);
+			client.serverSetupSetRequest(params.server_ip,server_setup);
+			client.run();
+			printf("HTTP 1.1/301 Moved Permanently\r\n"
+				"Location: http://%s\r\n\r\n",getenv("HTTP_HOST"));
+			return 0;
+			}
+	
+		TemplateKeywordProcessor keyp(client,eh,params_cgi);
+		SyZmO::ClientCgi::TemplateReader reader(params_cgi.view.begin(),keyp);
+		reader.run();
 		}
-	fclose(src);
+	catch(const SyZmO::ExceptionMissing& e)
+		{
+		e.print();
+		}
+
 	return 0;
 	}

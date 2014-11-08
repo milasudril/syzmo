@@ -12,7 +12,7 @@ dependency[client.o]
 namespace SyZmO
 	{
 	class EventHandler;
-
+	class ServerSetup;
 	class Client
 		{
 		public:
@@ -37,8 +37,8 @@ namespace SyZmO
 			void connectionCloseRequest(const char* server,uint32_t device_id);
 			void serverHostnameRequest(const char* server);
 			void serverSetupGetRequest(const char* server);
+			void serverSetupSetRequest(const char* server,const ServerSetup& setup);
 
-			void serverExitRequest(const char* server);
 
 			int run();
 			void stop()

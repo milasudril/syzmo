@@ -37,6 +37,10 @@ namespace SyZmO
 				,const MessageCtrl::ServerHostnameResponse& message)=0;
 			virtual bool serverSetupGet(Client& client,const char* server
 				,const MessageCtrl::ServerSetupGetResponse& message)=0;
+				
+			virtual bool serverSetupSet(Client& client,const char* server
+				,const MessageCtrl::ServerSetupSetResponse& message)=0;
+				
 
 			virtual bool serverStartup(Client& client,const char* server)=0;
 			virtual bool serverShutdown(Client& client,const char* server)=0;

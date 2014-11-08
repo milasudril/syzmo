@@ -7,7 +7,6 @@ dependency[server.o]
 #define SYZMO_SERVER_H
 
 #include "../bridge/inttypes.h"
-#include "../bridge/server_setup.h"
 #include "../bridge/socket_datagram.h"
 #include "../bridge/message_midi.h"
 
@@ -17,11 +16,12 @@ namespace SyZmO
 	{
 	class SocketDatagram;
 	class Connection;
+	class ServerSetup;
 
 	class Server
 		{
 		public:
-			Server(const ServerSetup& params);
+			Server(ServerSetup& params);
 			~Server();
 
 			void midiMessageSend(const char* client,uint32_t dev_id,MessageMidi msg);
@@ -33,6 +33,7 @@ namespace SyZmO
 
 			void hostnameSend(const char* client);
 			void setupGetSend(const char* client);
+			void setupSet(const char* client,const ServerSetup& setup);
 
 
 			void connectionsIsAliveRequest();
@@ -43,7 +44,7 @@ namespace SyZmO
 				{running=0;}
 
 		private:
-			ServerSetup m_params;
+			ServerSetup& m_params;
 			SocketDatagram socket_in;
 			SocketDatagram socket_out;
 			size_t n_devs;

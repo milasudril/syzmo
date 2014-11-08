@@ -5,7 +5,7 @@ target[name[syzmo_client_studio] type[application] platform[;GNU/Linux]]
 #include "midi_router.h"
 #include "event_handler.h"
 #include "../client/client.h"
-#include "../configfile.h"
+#include "../configfile_in.h"
 #include "../buffer.h"
 #include <herbs/logwriterdefault/logwriterdefault.h>
 #include <herbs/thread/thread.h>
@@ -16,12 +16,8 @@ int main()
 	{
 	Herbs::LogWriterDefault logwriter;
 
-	SyZmO::ClientStudio::MidiRouter router(logwriter);
-
-	SyZmO::ClientStudio::EventHandler handler(router);
-
 	SyZmO::Client::Parameters params;
-	SyZmO::ConfigFile config("syzmo_config_client.txt");
+	SyZmO::ConfigFileIn config("syzmo_config_client.txt");
 	SyZmO::Buffer key(16);
 	SyZmO::Buffer value(16);
 	while(config.paramGet(key,value))
@@ -35,6 +31,8 @@ int main()
 
 	params.flags=SyZmO::Client::Parameters::SERVER_ANY;
 
+	SyZmO::ClientStudio::MidiRouter router(logwriter);
+	SyZmO::ClientStudio::EventHandler handler(router);
 	SyZmO::Client client(params,handler);
 	router.pumpClientSet(client);
 	router.pumpStart();

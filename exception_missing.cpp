@@ -16,5 +16,5 @@ SyZmO::ExceptionMissing::ExceptionMissing(const char* file,unsigned int line)
 
 void SyZmO::ExceptionMissing::print() const
 	{
-	fprintf(stderr,"%s:%u: Unknown error\n",m_file,m_line);
+	printf("%s:%u: Unknown error\n",m_file,m_line);
 	}

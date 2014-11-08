@@ -79,14 +79,14 @@ void SyZmO::Client::connectionCloseRequest(const char* server,uint32_t device_id
 	MessageCtrl msg_out(req);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
-	
+
 void SyZmO::Client::serverHostnameRequest(const char* server)
 	{
 	MessageCtrl::ServerHostnameRequest req;
 	MessageCtrl msg_out(req);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
-	
+
 void SyZmO::Client::serverSetupGetRequest(const char* server)
 	{
 	MessageCtrl::ServerSetupGetRequest req;
@@ -94,13 +94,13 @@ void SyZmO::Client::serverSetupGetRequest(const char* server)
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
 
-void SyZmO::Client::serverExitRequest(const char* server)
+void SyZmO::Client::serverSetupSetRequest(const char* server,const ServerSetup& setup)
 	{
-	MessageCtrl::ServerExitRequest exitreq;
-	MessageCtrl msg_out(exitreq);
+	MessageCtrl::ServerSetupSetRequest req;
+	req.setup=setup;
+	MessageCtrl msg_out(req);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
-
 
 int SyZmO::Client::run()
 	{
@@ -194,8 +194,8 @@ int SyZmO::Client::run()
 					running=m_handler.connectionClosed(*this,source,*msg_in);
 					}
 					break;
-					
-					
+
+
 				case MessageCtrl::ServerHostnameResponse::ID:
 					{
 					MessageCtrl::ServerHostnameResponse* msg_in
@@ -205,12 +205,22 @@ int SyZmO::Client::run()
 					running=m_handler.serverHostname(*this,source,*msg_in);
 					}
 					break;
-					
+
 				case MessageCtrl::ServerSetupGetResponse::ID:
 					{
 					MessageCtrl::ServerSetupGetResponse* msg_in
 						=(MessageCtrl::ServerSetupGetResponse*)msg.data;
 					running=m_handler.serverSetupGet(*this,source,*msg_in);
+					}
+					break;
+
+				case MessageCtrl::ServerSetupSetResponse::ID:
+					{
+					MessageCtrl::ServerSetupSetResponse* msg_in
+						=(MessageCtrl::ServerSetupSetResponse*)msg.data;
+					running=m_handler.serverSetupSet(*this,source,*msg_in);
+					if(running)
+						{return 1;}
 					}
 					break;
 				}

@@ -40,7 +40,9 @@ namespace SyZmO
 				bool serverHostname(Client& client,const char* server
 					,const MessageCtrl::ServerHostnameResponse& message);
 				bool serverSetupGet(Client& client,const char* server
-					,const MessageCtrl::ServerSetupGetResponse& message);	
+					,const MessageCtrl::ServerSetupGetResponse& message);
+				bool serverSetupSet(Client& client,const char* server
+					,const MessageCtrl::ServerSetupSetResponse& message);
 
 				bool serverStartup(Client& client,const char* server);
 				bool serverShutdown(Client& client,const char* server);

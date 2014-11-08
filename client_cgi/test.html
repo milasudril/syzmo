@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SyZmO server @  ...</title>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="margins.css">
+<link rel="stylesheet" type="text/css" href="layout.css">
+<link rel="stylesheet" type="text/css" href="logo.css">
+<link rel="stylesheet" type="text/css" href="sizes.css">
+<link rel="stylesheet" type="text/css" href="fonts.css">
+<link rel="stylesheet" type="text/css" href="colors.css">
+</head>
+<body>
+<h1 id="logo"><img src="syzmo.svg" alt="SyZmO"></h1>
+<ul id="menu">
+<li><a href="/syzmo_client_cgi.exe?view=info">Information</a></li>
+<li><a href="/syzmo_client_cgi.exe?view=log">Log file</a></li>
+<li><a href="/syzmo_client_cgi.exe?view=setup">System setup</a></li>
+</ul>
+
+<div id="content">
+<h2>Server setup</h2>
+<form action="/syzmo_client_cgi.exe" method="get">
+<input type="hidden" name="setup_set" value="yes">
+
+<table>
+<tr><th class="transpose">Input port:</th><td><input type="number" value="49153" name="port_in"></td></tr>
+<tr><th class="transpose">Output port:</th><td><input type="number" value="49152" name="port_out"></td></tr>
+<tr><th class="transpose">Broadcast startup message:</th><td><input type="checkbox" value="yes" name="startup_broadcast" checked></td></tr>
+</table>
+
+
+<p><input type="submit" value="Apply"> <input type="reset" value="Reset"></p>
+</form>
+
+</div>
+</body>
+</html>

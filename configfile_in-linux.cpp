@@ -1,11 +1,11 @@
 #ifdef __WAND__
 target
 	[
-	name[configfile.o] type[object] platform[;GNU/Linux]
+	name[configfile_in.o] type[object] platform[;GNU/Linux]
 	]
 #endif
 
-#include "configfile.h"
+#include "configfile_in.h"
 #include "buffer.h"
 #include "exception_missing.h"
 #include <unistd.h>
@@ -13,7 +13,7 @@ target
 #include <pwd.h>
 #include <cstdio>
 
-SyZmO::ConfigFile::ConfigFile(const char* filename)
+SyZmO::ConfigFileIn::ConfigFileIn(const char* filename)
 	{
 	struct passwd* pw = getpwuid(getuid());
 	const char* homedir = pw->pw_dir;
@@ -26,7 +26,7 @@ SyZmO::ConfigFile::ConfigFile(const char* filename)
 		{throw ExceptionMissing(__FILE__,__LINE__);}
 	}
 
-bool SyZmO::ConfigFile::paramGet(Buffer& key,Buffer& value)
+bool SyZmO::ConfigFileIn::paramGet(Buffer& key,Buffer& value)
 	{
 	if(feof((FILE*)src))
 		{return 0;}
@@ -74,7 +74,7 @@ bool SyZmO::ConfigFile::paramGet(Buffer& key,Buffer& value)
 	return 1;
 	}
 
-SyZmO::ConfigFile::~ConfigFile()
+SyZmO::ConfigFileIn::~ConfigFileIn()
 	{
 	fclose((FILE*)src);
 	}

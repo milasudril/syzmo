@@ -6,7 +6,7 @@ target[name[event_handler.o] type[object]]
 #include <cstdio>
 #include <algorithm>
 
-SyZmO::ClientCgi::EventHandler::EventHandler():errormode_cdata(0)
+SyZmO::ClientCgi::EventHandler::EventHandler():mode_output(0)
 	{}
 
 void SyZmO::ClientCgi::EventHandler::clientStartup(Client& client
@@ -18,7 +18,7 @@ void SyZmO::ClientCgi::EventHandler::clientShutdown(Client& client)
 
 bool SyZmO::ClientCgi::EventHandler::timeout(Client& client)
 	{
-	if(errormode_cdata)
+	if(mode_output&MODE_OUTPUT_CDATA)
 		{printf("Server did not respond in time");}
 	else
 		{printf("<p class=\"error\">Server did not respond in time</p>");}
@@ -83,14 +83,37 @@ bool SyZmO::ClientCgi::EventHandler::serverHostname(Client& client,const char* s
 bool SyZmO::ClientCgi::EventHandler::serverSetupGet(Client& client,const char* server
 	,const MessageCtrl::ServerSetupGetResponse& message)
 	{
-	printf("<table>\n"
-		"<tr><th class=\"transpose\">Input port:</th><td>%u</td></tr>\n"
-		"<tr><th class=\"transpose\">Output port:</th><td>%u</td></tr>\n"
-		"<tr><th class=\"transpose\">Broadcast startup message:</th><td>%s</td></tr>\n"
-		"</table>"
-		,message.setup.port_in
-		,message.setup.port_out
-		,message.setup.flags&ServerSetup::STARTUP_BROADCAST? "Yes" : "No");
+	printf("<table>\n");
+	if(mode_output&MODE_OUTPUT_INPUT)
+		{
+		printf("<tr><th class=\"transpose\">Input port:</th>"
+			"<td><input type=\"number\" value=\"%u\" name=\"port_in\"></td></tr>\n"
+			"<tr><th class=\"transpose\">Output port:</th>"
+			"<td><input type=\"number\" value=\"%u\" name=\"port_out\"></td></tr>\n"
+			"<tr><th class=\"transpose\">Broadcast startup message:</th>"
+			"<td><input type=\"checkbox\" value=\"yes\" "
+			"name=\"startup_broadcast\"%s></td></tr>\n"
+			,message.setup.port_in
+			,message.setup.port_out
+			,message.setup.flags&ServerSetup::STARTUP_BROADCAST? " checked" : "");
+		}
+	else
+		{
+		printf("<tr><th class=\"transpose\">Input port:</th><td>%u</td></tr>\n"
+			"<tr><th class=\"transpose\">Output port:</th><td>%u</td></tr>\n"
+			"<tr><th class=\"transpose\">Broadcast startup message:</th>"
+			"<td>%s</td></tr>\n"
+			,message.setup.port_in
+			,message.setup.port_out
+			,message.setup.flags&ServerSetup::STARTUP_BROADCAST? "Yes" : "No");
+		}
+	printf("</table>\n");
+	return 0;
+	}
+
+bool SyZmO::ClientCgi::EventHandler::serverSetupSet(Client& client,const char* server
+	,const MessageCtrl::ServerSetupSetResponse& message)
+	{
 	return 0;
 	}
 

@@ -143,26 +143,35 @@ namespace SyZmO
 			static const uint32_t ID=16;
 			ServerSetup setup;
 			};
+			
+		struct ServerSetupSetRequest
+			{
+			static const uint32_t ID=17;
+			ServerSetup setup;
+			};
+		
+		struct ServerSetupSetResponse
+			{
+			static const uint32_t ID=18;
+			ServerSetup setup;
+			};
 	
 
 	
 		struct ServerStartupResponse
-			{static const uint32_t ID=17;};
-
-		struct ServerExitRequest
-			{static const uint32_t ID=18;};
-
-		struct ServerExitResponse
 			{static const uint32_t ID=19;};
 
-		struct ServerRestartRequest
+		struct ServerExitResponse
 			{static const uint32_t ID=20;};
 
-		struct ServerShutdownRequest
+		struct ServerRestartRequest
 			{static const uint32_t ID=21;};
 
-		struct ServerRebootRequest
+		struct ServerShutdownRequest
 			{static const uint32_t ID=22;};
+
+		struct ServerRebootRequest
+			{static const uint32_t ID=23;};
 
 		private:
 			void valuesSet(uint32_t length,const void* vals);
