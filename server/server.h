@@ -17,11 +17,12 @@ namespace SyZmO
 	class SocketDatagram;
 	class Connection;
 	class ServerSetup;
+	class LogfileOut;
 
 	class Server
 		{
 		public:
-			Server(ServerSetup& params);
+			Server(ServerSetup& params,LogfileOut& logfile);
 			~Server();
 
 			void midiMessageSend(const char* client,uint32_t dev_id,MessageMidi msg);
@@ -42,16 +43,17 @@ namespace SyZmO
 			static const int RUN_STATUS_CONTINUE=0;
 			static const int RUN_STATUS_SHUTDOWN=1;
 			static const int RUN_STATUS_REBOOT=2;
-			
+
 			int run();
-			
+
 			void stop()
 				{running=0;}
-				
+
 
 
 		private:
 			ServerSetup& m_params;
+			LogfileOut& m_log;
 			SocketDatagram socket_in;
 			SocketDatagram socket_out;
 			size_t n_devs;

@@ -8,12 +8,15 @@ dependency[exception_missing.o]
 
 namespace SyZmO
 	{
+	class LogfileOut;
 	class ExceptionMissing
 		{
 		public:
 			ExceptionMissing(const char* file,unsigned int line);
 
 			void print() const;
+
+			void print(LogfileOut& logfile) const;
 
 		private:
 			unsigned int m_line;

@@ -3,6 +3,7 @@ target[name[exception_missing.o] type[object]]
 #endif
 
 #include "exception_missing.h"
+#include "logfile/logfile_out.h"
 #include <cstdio>
 #include <cstring>
 
@@ -17,4 +18,10 @@ SyZmO::ExceptionMissing::ExceptionMissing(const char* file,unsigned int line)
 void SyZmO::ExceptionMissing::print() const
 	{
 	printf("%s:%u: Unknown error\n",m_file,m_line);
+	}
+
+
+void SyZmO::ExceptionMissing::print(LogfileOut& logfile) const
+	{
+	logfile.entryWrite("127.0.0.1","%s:%u: Unknown error\n",m_file,m_line);
 	}

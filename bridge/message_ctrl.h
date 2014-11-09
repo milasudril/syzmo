@@ -89,6 +89,7 @@ namespace SyZmO
 			uint32_t status;
 			static const uint32_t STATUS_OK=0;
 			static const uint32_t STATUS_BUSY=1;
+			static const uint32_t STATUS_INVALID=2;
 			static const uint32_t STATUS_ERROR=(uint32_t)-1;
 			};
 
@@ -111,7 +112,8 @@ namespace SyZmO
 			uint32_t status;
 			static const uint32_t STATUS_OK=0;
 			static const uint32_t NOT_OWNER=1;
-			static const uint32_t NOT_CONNECTED=2;
+			static const uint32_t STATUS_INVALID=2;
+			static const uint32_t NOT_CONNECTED=3;
 			};
 
 		struct ConnectionCloseResponsePublic
@@ -119,13 +121,13 @@ namespace SyZmO
 			static const uint32_t ID=12;
 			uint32_t device_id;
 			};
-			
-			
+
+
 		struct ServerHostnameRequest
 			{
 			static const uint32_t ID=13;
 			};
-			
+
 		struct ServerHostnameResponse
 			{
 			static const uint32_t ID=14;
@@ -143,21 +145,21 @@ namespace SyZmO
 			static const uint32_t ID=16;
 			ServerSetup setup;
 			};
-			
+
 		struct ServerSetupSetRequest
 			{
 			static const uint32_t ID=17;
 			ServerSetup setup;
 			};
-		
+
 		struct ServerSetupSetResponse
 			{
 			static const uint32_t ID=18;
 			ServerSetup setup;
 			};
-	
 
-	
+
+
 		struct ServerStartupResponse
 			{static const uint32_t ID=19;};
 

@@ -85,7 +85,7 @@ int main()
 				,getenv("SCRIPT_NAME"));
 			return 0;
 			}
-		
+
 		SyZmO::Client::Parameters params;
 		params.port_in=49152;
 		params.port_out=49153;
@@ -129,25 +129,25 @@ int main()
 					"Location: http://%s\r\n\r\n",getenv("HTTP_HOST"));
 				}
 				return 0;
-				
+
 			case SyZmO::ClientCgi::Parameters::ACTION_SHUTDOWN:
 				{
-				TemplateKeywordProcessor keyp(client,eh,params_cgi);
-				SyZmO::ClientCgi::TemplateReader reader("shutdown.html",keyp);
-				reader.run();
+				printf("HTTP 1.1/301 Moved Permanently\r\n"
+					"Location: http://%s%s?view=shutdown\r\n\r\n"
+					,getenv("HTTP_HOST"),getenv("SCRIPT_NAME"));
 				client.serverShutdownRequest(params.server_ip);
 				}
 				return 0;
-				
+
 			case SyZmO::ClientCgi::Parameters::ACTION_REBOOT:
 				{
-				TemplateKeywordProcessor keyp(client,eh,params_cgi);
-				SyZmO::ClientCgi::TemplateReader reader("reboot.html",keyp);
-				reader.run();
+				printf("HTTP 1.1/301 Moved Permanently\r\n"
+					"Location: http://%s%s?view=reboot\r\n\r\n"
+					,getenv("HTTP_HOST"),getenv("SCRIPT_NAME"));
 				client.serverRebootRequest(params.server_ip);
 				}
 				return 0;
-				
+
 			default:
 				printf("Content-type: text/plain\r\n\r\nBad Action=%u\n"
 					,params_cgi.action);
