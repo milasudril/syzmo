@@ -4,8 +4,8 @@ target[name[server_setup.o] type[object]]
 
 #include "server_setup.h"
 #include "../buffer.h"
-#include "../configfile_in.h"
-#include "../configfile_out.h"
+#include "../configfile/configfile_in.h"
+#include "../configfile/configfile_out.h"
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>

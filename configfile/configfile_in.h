@@ -6,7 +6,7 @@ dependency[configfile_in.o]
 #ifndef SYZMO_CONFIGFILEIN_H
 #define SYZMO_CONFIGFILEIN_H
 
-#include "paramreader.h"
+#include "../paramreader.h"
 
 namespace SyZmO
 	{

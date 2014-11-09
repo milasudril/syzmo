@@ -5,7 +5,7 @@ target[name[syzmo_client_studio] type[application] platform[;GNU/Linux]]
 #include "midi_router.h"
 #include "event_handler.h"
 #include "../client/client.h"
-#include "../configfile_in.h"
+#include "../configfile/configfile_in.h"
 #include "../buffer.h"
 #include <herbs/logwriterdefault/logwriterdefault.h>
 #include <herbs/thread/thread.h>

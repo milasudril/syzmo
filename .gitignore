@@ -27,4 +27,4 @@
 *.out
 *.app
 
-__wand_targets*
+__*

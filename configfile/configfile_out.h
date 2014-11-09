@@ -6,7 +6,7 @@ dependency[configfile_out.o]
 #ifndef SYZMO_CONFIGFILEOUT_H
 #define SYZMO_CONFIGFILEOUT_H
 
-#include "paramwriter.h"
+#include "../paramwriter.h"
 
 namespace SyZmO
 	{

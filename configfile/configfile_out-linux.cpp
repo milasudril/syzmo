@@ -1,29 +1,28 @@
 #ifdef __WAND__
 target
 	[
-	name[configfile_out.o] type[object] platform[;Windows]
+	name[configfile_out.o] type[object] platform[;GNU/Linux]
 	]
 #endif
 
 #include "configfile_out.h"
-#include "buffer.h"
-#include "exception_missing.h"
-#define _WIN32_IE 0x0400
-#include <windows.h>
-#include <shlobj.h>
+#include "../buffer.h"
+#include "../exception_missing.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 #include <cstdio>
 
 SyZmO::ConfigFileOut::ConfigFileOut(const char* filename)
 	{
-	char homedir[MAX_PATH];
-	if(!SHGetSpecialFolderPath(NULL,homedir,CSIDL_APPDATA,TRUE))
+	struct passwd* pw = getpwuid(getuid());
+	const char* homedir = pw->pw_dir;
+	if(homedir==nullptr)
 		{throw ExceptionMissing(__FILE__,__LINE__);}
-	homedir[MAX_PATH-1]=0;
-
-	Buffer temp(MAX_PATH,homedir);
-	temp.append('\\').append(filename).terminate();
+	Buffer temp(256,homedir);
+	temp.append('/').append(filename).terminate();
 	dest=fopen(temp.begin(),"w");
-	if(dest==NULL)
+	if(dest==nullptr)
 		{throw ExceptionMissing(__FILE__,__LINE__);}
 	}
 

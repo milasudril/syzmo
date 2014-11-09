@@ -6,8 +6,8 @@ target
 #endif
 
 #include "configfile_in.h"
-#include "buffer.h"
-#include "exception_missing.h"
+#include "../buffer.h"
+#include "../exception_missing.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>

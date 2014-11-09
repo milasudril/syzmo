@@ -6,8 +6,8 @@ target
 #endif
 
 #include "configfile_in.h"
-#include "buffer.h"
-#include "exception_missing.h"
+#include "../buffer.h"
+#include "../exception_missing.h"
 #define _WIN32_IE 0x0400
 #include <windows.h>
 #include <shlobj.h>
