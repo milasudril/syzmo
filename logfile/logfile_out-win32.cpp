@@ -5,6 +5,7 @@ target[name[logfile_out.o] type[object] platform[;Windows]]
 #include "logfile_out.h"
 #include "../buffer.h"
 #include "../exception_missing.h"
+#include "../bridge/inttypes.h"
 #define _WIN32_IE 0x0400
 #include <windows.h>
 #include <shlobj.h>
@@ -47,7 +48,7 @@ void SyZmO::LogfileOut::entryWrite(const char* address,const char* message,...)
 	{
 	SYSTEMTIME now;
 	GetSystemTime(&now);
-	int l_tot=fprintf((FILE*)dest,"%u-%02u-%02u %u:%02u:%02u;"
+	uint16_t l_tot=fprintf((FILE*)dest,"%u-%02u-%02u %u:%02u:%02u;"
 		,now.wYear,now.wMonth,now.wDay,now.wHour,now.wMinute,now.wSecond);
 
 	l_tot+=strlen(address)+1;
@@ -61,6 +62,6 @@ void SyZmO::LogfileOut::entryWrite(const char* address,const char* message,...)
 	putc('\n',(FILE*)dest);
 	fflush((FILE*)dest);
 
-	fprintf((FILE*)dest_index,"%d ",l_tot);
+	fwrite(&l_tot, sizeof(l_tot),1,(FILE*)dest_index);
 	fflush((FILE*)dest_index);
 	}
