@@ -32,7 +32,7 @@ void SyZmO::ClientStudio::Connection::eventPost(MidiPump& pump,size_t time)
 		MessageMidi msg;
 		msg.dword=event_next.data.dwords[0];
 		pump.eventPost(m_server,m_device_id,msg,event_next.time-time_prev);
-		time_prev=time;
+		time_prev=event_next.time;
 		event_has=port_in.eventNextGet(event_next);
 		}
 	}

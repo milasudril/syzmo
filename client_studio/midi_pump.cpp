@@ -28,7 +28,9 @@ void SyZmO::ClientStudio::MidiPump::eventPost(const char* server
 	event_next.device_id=device_id;
 	event_next.midi=msg;
 	event_next.delay=delay;
+//	printf("Pushing event %x to fifo\n",event_next.midi.bytes[0]);
 	buffer.push_back(event_next);
+//	data_has.set();
 	}
 
 namespace
@@ -52,8 +54,10 @@ namespace
 
 int SyZmO::ClientStudio::MidiPump::run()
 	{
+	size_t count=0;
 	while(!m_stop)
 		{
+		data_has.wait();
 		while(!buffer.empty())
 			{
 			const Event& event_next=buffer.front();
@@ -62,7 +66,8 @@ int SyZmO::ClientStudio::MidiPump::run()
 				,event_next.midi);
 			buffer.pop_front();
 			}
-		data_has.wait();
+
+		++count;
 		}
 	return STATUS_OK;
 	}
