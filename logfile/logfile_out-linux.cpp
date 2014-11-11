@@ -23,7 +23,7 @@ SyZmO::LogfileOut::LogfileOut(const char* filename)
 
 		{
 		Buffer temp(256,homedir);
-		temp.append('\\').append(filename).append(".txt").terminate();
+		temp.append('/').append(filename).append(".txt").terminate();
 		dest=fopen(temp.begin(),"ab");
 		if(dest==NULL)
 			{throw ExceptionMissing(__FILE__,__LINE__);}
@@ -31,7 +31,7 @@ SyZmO::LogfileOut::LogfileOut(const char* filename)
 
 		{
 		Buffer temp(256,homedir);
-		temp.append('\\').append(filename).append(".idx").terminate();
+		temp.append('/').append(filename).append(".idx").terminate();
 		dest_index=fopen(temp.begin(),"ab");
 		if(dest_index==NULL)
 			{
