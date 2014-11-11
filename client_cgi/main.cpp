@@ -1,5 +1,6 @@
 #ifdef __WAND__
-target[name[syzmo_client_cgi.exe] type[application] platform[;Windows]]
+target[name[../syzmo_client_cgi.exe] type[application] platform[;Windows]]
+target[name[../syzmo_client_cgi] type[application] ]
 #endif
 
 #include "event_handler.h"
@@ -9,12 +10,15 @@ target[name[syzmo_client_cgi.exe] type[application] platform[;Windows]]
 
 #include "../client/client.h"
 #include "../bridge/server_setup.h"
+#include "../bridge/message_midi.h"
 #include "../buffer.h"
 #include "../exception_missing.h"
 
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+
+#include <windows.h>
 
 class TemplateKeywordProcessor:
 	public SyZmO::ClientCgi::TemplateReader::KeywordProcessor
@@ -145,6 +149,33 @@ int main()
 					"Location: http://%s%s?view=reboot\r\n\r\n"
 					,getenv("HTTP_HOST"),getenv("SCRIPT_NAME"));
 				client.serverRebootRequest(params.server_ip);
+				}
+				return 0;
+
+			case SyZmO::ClientCgi::Parameters::ACTION_TEST:
+				{
+				SyZmO::uint32_t device_id=params_cgi.device;
+				SyZmO::MessageMidi msg;
+				msg.bytes[0]=0xc0;
+				msg.bytes[1]=81;
+				msg.bytes[2]=0;
+				client.messageMidiSend(params.server_ip,device_id,msg);
+				msg.bytes[0]=0xb0;
+				msg.bytes[1]=7;
+				msg.bytes[2]=127;
+				client.messageMidiSend(params.server_ip,device_id,msg);
+				msg.bytes[0]=0x90;
+				msg.bytes[1]=63;
+				msg.bytes[2]=127;
+				Sleep(500);
+				client.messageMidiSend(params.server_ip,device_id,msg);
+				msg.bytes[0]=0x80;
+				msg.bytes[1]=63;
+				msg.bytes[2]=127;
+				client.messageMidiSend(params.server_ip,device_id,msg);
+
+				printf("HTTP 1.1/301 Moved Permanently\r\n"
+					"Location: http://%s\r\n\r\n",getenv("HTTP_HOST"));
 				}
 				return 0;
 

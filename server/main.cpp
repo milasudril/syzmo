@@ -1,6 +1,6 @@
 #ifdef __WAND__
-target[name[syzmo_server.exe] type[application] platform[;Windows]]
-target[name[syzmo_server] type[application]]
+target[name[../syzmo_server.exe] type[application] platform[;Windows]]
+target[name[../syzmo_server] type[application]]
 #endif
 
 #include "server.h"

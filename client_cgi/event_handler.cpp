@@ -47,8 +47,13 @@ namespace
 bool SyZmO::ClientCgi::EventHandler::deviceName(Client& client
 	,const char* server,const MessageCtrl::DeviceNameResponse& message)
 	{
-	printf("<tr><td class=\"number\">%u</td><td>%s</td><td>%s</td></tr>\n"
-		,message.device_id,message.name,dev_status[std::min(message.status,3u)]);
+	printf("<tr><td class=\"number\">%u</td>"
+		"<td><a href=\"http://%s%s?action=Test&device=%u\">%s</a></td>"
+		"<td>%s</td></tr>\n"
+		,message.device_id
+		,getenv("HTTP_HOST"),getenv("SCRIPT_NAME")
+		,message.device_id
+		,message.name,dev_status[std::min(message.status,3u)]);
 	if(message.device_id==dev_count-1)
 		{
 		printf("</table>\n");
@@ -79,7 +84,7 @@ bool SyZmO::ClientCgi::EventHandler::serverHostname(Client& client,const char* s
 	printf("%s",message.hostname);
 	return 0;
 	}
-	
+
 bool SyZmO::ClientCgi::EventHandler::serverSetupGet(Client& client,const char* server
 	,const MessageCtrl::ServerSetupGetResponse& message)
 	{

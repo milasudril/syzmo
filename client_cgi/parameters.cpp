@@ -30,6 +30,11 @@ void SyZmO::ClientCgi::load(Parameters& params)
 			params.record_end=atol(value.begin());
 			}
 		else
+		if(strcmp(key.begin(),"device")==0)
+			{
+			params.device=atol(value.begin());
+			}
+		else
 		if(strcmp(key.begin(),"action")==0)
 			{
 			if(strcmp(value.begin(),"Normal")==0)
@@ -43,6 +48,9 @@ void SyZmO::ClientCgi::load(Parameters& params)
 			else
 			if(strcmp(value.begin(),"Reboot")==0)
 				{params.action=Parameters::ACTION_REBOOT;}
+			else
+			if(strcmp(value.begin(),"Test")==0)
+				{params.action=Parameters::ACTION_TEST;}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 #ifdef __WAND__
-target[name[syzmo_client_studio] type[application] platform[;GNU/Linux]]
+target[name[../syzmo_client_studio] type[application] platform[;GNU/Linux]]
 #endif
 
 #include "midi_router.h"

@@ -4,7 +4,6 @@ target[name[connection.o] type[object]]
 
 #include "connection.h"
 #include "server.h"
-#include <cstring>
 
 SyZmO::Connection::Connection(const char* client,uint32_t device_id):
 	midi_out(device_id)
@@ -21,7 +20,7 @@ bool SyZmO::Connection::clientMatch(const char* client) const
 		{return 1;}
 	return 0;
 	}
-	
+
 bool SyZmO::Connection::isAliveRequest(Server& server)
 	{
 	if(isalive_sent)
