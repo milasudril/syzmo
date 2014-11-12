@@ -3,10 +3,13 @@ all: syzmo_client_studio syzmo_client_cgi.exe syzmo_server.exe
 variables
 
 VARS_OLD := $(.VARIABLES)
+
 #This url shall refer to a tar.gz file containing the MinGW 3.4.5 binary
 #distribution
 SYZMO_MINGW_URL?=http://gdurl.com/RVgH
-SYZMO_SERVER?=syzmo_server
+
+#This is the name of the host that runs the server
+SYZMO_HOST?=syzmo_host
 
 variables:
 	$(foreach v,                                        \
@@ -30,5 +33,5 @@ syzmo_server.exe: __mingw
 
 install: all
 	wand 'profile[install]'
-	SYZMO_SERVER=$(SYZMO_SERVER) ./server_install.sh
+	SYZMO_HOST=$(SYZMO_HOST) ./server_install.sh
 

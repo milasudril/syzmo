@@ -4,15 +4,15 @@ echo -n "
 
 This is SyZmO Server pre-install/upgrade script
 
-Enter username for the SMB server $SYZMO_SERVER: "
+Enter username for the SMB server $SYZMO_HOST: "
 read tmp
 echo "username="$tmp > __samba_logon.txt
 chmod 600 __samba_logon.txt
-echo -n "Enter password for the SMB server $SYZMO_SERVER: "
+echo -n "Enter password for the SMB server $SYZMO_HOST: "
 read -s tmp
 echo "password="$tmp >> __samba_logon.txt
 unset tmp
-smbclient '\\'$SYZMO_SERVER'\SYZMO' -A __samba_logon.txt << SMBSESSION
+smbclient '\\'$SYZMO_HOST'\SYZMO' -A __samba_logon.txt << SMBSESSION
 prompt
 put syzmo_upgrade.vbs syzmo_upgrade.vbs
 mkdir client_cgi
