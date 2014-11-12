@@ -61,7 +61,7 @@ Installing the system
  4. Run `make install` from this directory. The makefile will download a binary distribution of `MinGW 3.4.5`, that will be used to compile the server code.
  5. When the script asks for login information, type the username, and password. If there is no password just hit ENTER to skip to the next question.
  6. On the server machine, create a shortcut to `C:\syzmo\syzmo_upgrade.vbs` in the `Autostart` folder in the "Start" menu. For more information, you may have a look at this file in `notepad`.
- 7. Write configuration files similar to `syzmo_config_*`. They should be stored in a corresponding `%APPDATA` directory. On Linux, the user's home directory is used. On Windows, it is the `Application Data` directory.
+ 7. Write configuration files similar to `syzmo_config_*`. They should be stored in a corresponding `%APPDATA%` directory. On Linux, the user's home directory is used. On Windows, it is the `Application Data` directory.
 
 
 TODO:s
