@@ -25,7 +25,7 @@ namespace SyZmO
 				static const uint32_t SERVER_ANY=0x1;
 				};
 
-			Client(const Parameters& params,EventHandler& eh);
+			Client(Parameters& params,EventHandler& eh);
 			~Client();
 
 			void messageMidiSend(const char* server,uint32_t device_id
@@ -41,13 +41,15 @@ namespace SyZmO
 			void serverShutdownRequest(const char* server);
 			void serverRebootRequest(const char* server);
 
+			static const int RUN_STATUS_CONTINUE=0;
+			static const int RUN_STATUS_EXIT=1;
 
 			int run();
 			void stop()
 				{m_stop=1;}
 
 		private:
-			Parameters m_params;
+			Parameters& m_params;
 			SocketDatagram socket_in;
 			SocketDatagram socket_out;
 			EventHandler& m_handler;

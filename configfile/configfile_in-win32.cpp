@@ -27,6 +27,22 @@ SyZmO::ConfigFileIn::ConfigFileIn(const char* filename)
 		{throw ExceptionMissing(__FILE__,__LINE__);}
 	}
 
+bool SyZmO::ConfigFileIn::exists(const char* filename)
+	{
+	char homedir[MAX_PATH];
+	if(!SHGetSpecialFolderPath(NULL,homedir,CSIDL_APPDATA,TRUE))
+		{throw ExceptionMissing(__FILE__,__LINE__);}
+	homedir[MAX_PATH-1]=0;
+
+	Buffer temp(MAX_PATH,homedir);
+	temp.append('\\').append(filename).terminate();
+	FILE* src=fopen(temp.begin(),"r");
+	if(src==NULL)
+		{return 0;}
+	fclose(src);
+	return 1;
+	}
+
 bool SyZmO::ConfigFileIn::paramGet(Buffer& key,Buffer& value)
 	{
 	if(feof((FILE*)src))

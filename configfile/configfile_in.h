@@ -19,6 +19,8 @@ namespace SyZmO
 
 			bool paramGet(Buffer& key,Buffer& value);
 
+			static bool exists(const char* filename);
+
 		private:
 			void* src;
 		};

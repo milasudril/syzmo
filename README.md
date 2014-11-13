@@ -4,7 +4,7 @@ This is a client-server solution for using a synthesizer hosted by another machi
 
 SyZmO consists of three programs:
 
- * `syzmo_client_studio` is the client directly visible to the end user. Its purpose is to act as a regular MIDI client in the music production environment
+ * `syzmo_client_studio` is the client directly visible to the end user. Its purpose is to act as a regular MIDI device in the music production environment
  * `syzmo_client_cgi` is a client running as a `cgi` program. This makes it possible to control the server via a web interface.
  * `syzmo_server` is the server communicating with the synthesizer
 
@@ -12,7 +12,7 @@ Dependencies
 ------------
 ### Build process
  * wand
- * Samba client
+ * smbclient
  * wget
  * wine
 
@@ -29,9 +29,9 @@ Dependencies
  * A web server with CGI support that works on the server system
 
 ### Details
-The client should compile and run on a GNU/Linux system with gcc 4.8.
+The studio client should compile and run on a GNU/Linux system with gcc 4.8.
 
-The server-side code needs the following dlls:
+The server code needs the following dlls:
  * `winmm.dll`
  * `shell32.dll` version 4.71 or later
 
@@ -41,7 +41,7 @@ To host the web interface, a web server is needed. On Windows 98, one possible c
 
 Special privileges required for the server
 ------------------------------------------
-*Those using Windows 98 as operating system on the server can skip this section*
+*Those using Windows 98 as operating system on the host can skip this section*
 
 To be able to use the `ExitWindowsEx`function, the server has started by an "interactive user". This user needs the following permissions:
 
@@ -61,13 +61,16 @@ Installing the system
  4. Run `make install` from this directory. The makefile will download a binary distribution of `MinGW 3.4.5`, that will be used to compile the server code.
  5. When the script asks for login information, type the username, and password. If there is no password just hit ENTER to skip to the next question.
  6. On the server machine, create a shortcut to `C:\syzmo\syzmo_upgrade.vbs` in the `Autostart` folder in the "Start" menu. For more information, you may have a look at this file in `notepad`.
- 7. Write configuration files similar to `syzmo_config_*`. They should be stored in a corresponding `%APPDATA%` directory. On Linux, the user's home directory is used. On Windows, it is the `Application Data` directory.
 
+Configuring ports
+-----------------
+The ports used for communication are chosen in two files, one on the host and the other one of the server. For how this works, see the example files `syzmo_config_client.txt` and `syzmo_config_server.txt`. The input port on the client side should be the output port on the server side and vice versa. These files are stored:
+
+ * GNU/Linux: In the *true* home directory of current user
+ * Windows: In the "Application Data" directory of current user
 
 TODO:s
 ------
- * Fix controlled shutdown on both client and server
+ * Fix controlled shutdown on client
  * Implement proper exception handling
  * Complete the web interface
- * Improve quick installation guide
-

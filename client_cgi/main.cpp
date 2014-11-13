@@ -98,9 +98,11 @@ int main()
 
 			{
 			SyZmO::ServerSetup params_server;
-			SyZmO::load(params_server);
-			params.port_in=params_server.port_out;
-			params.port_out=params_server.port_in;
+			if(SyZmO::load(params_server))
+				{
+				params.port_in=params_server.port_out;
+				params.port_out=params_server.port_in;
+				}
 			}
 
 		SyZmO::ClientCgi::Parameters params_cgi;

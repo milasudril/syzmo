@@ -12,7 +12,7 @@ namespace SyZmO
 	{
 	class ParamReader;
 	class ParamWriter;
-	
+
 	struct ServerSetup
 		{
 		static const uint32_t STARTUP_BROADCAST=0x1;
@@ -20,10 +20,10 @@ namespace SyZmO
 		uint16_t port_in;
 		uint16_t port_out;
 		};
-	
-	void load(ServerSetup& setup);
+
+	bool load(ServerSetup& setup);
 	void load(ParamReader& reader,ServerSetup& setup);
-	
+
 	void store(const ServerSetup& setup);
 	void store(ParamWriter& writer,const ServerSetup& setup);
 	}

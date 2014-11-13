@@ -23,12 +23,14 @@ int main()
 
 		SyZmO::load(params);
 
-		int status=SyZmO::Server::RUN_STATUS_CONTINUE;
-		while(!status)
+		int status;
+		do
 			{
 			SyZmO::Server server(params,logfile);
 			status=server.run();
+			SyZmO::store(params);
 			}
+		while(status==SyZmO::Server::RUN_STATUS_CONTINUE);
 
 		switch(status)
 			{

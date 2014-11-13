@@ -124,7 +124,7 @@ bool SyZmO::ClientCgi::EventHandler::serverSetupSet(Client& client,const char* s
 
 bool SyZmO::ClientCgi::EventHandler::serverStartup(Client& client
 	,const char* server)
-	{return 1;	}
+	{return 1;}
 
 bool SyZmO::ClientCgi::EventHandler::serverShutdown(Client& client
 	,const char* server)

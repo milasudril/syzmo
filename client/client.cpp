@@ -9,7 +9,7 @@ target[name[client.o] type[object]]
 
 #include <cstdio>
 
-SyZmO::Client::Client(const SyZmO::Client::Parameters& params,EventHandler& eh):
+SyZmO::Client::Client(SyZmO::Client::Parameters& params,EventHandler& eh):
 	m_params(params),m_handler(eh)
 	{
 	socket_in.bind(m_params.port_in);
@@ -101,14 +101,14 @@ void SyZmO::Client::serverSetupSetRequest(const char* server,const ServerSetup& 
 	MessageCtrl msg_out(req);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
-	
+
 void SyZmO::Client::serverShutdownRequest(const char* server)
 	{
 	MessageCtrl::ServerShutdownRequest req;
 	MessageCtrl msg_out(req);
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
-	
+
 void SyZmO::Client::serverRebootRequest(const char* server)
 	{
 	MessageCtrl::ServerRebootRequest req;
@@ -117,7 +117,7 @@ void SyZmO::Client::serverRebootRequest(const char* server)
 	}
 
 
-	
+
 int SyZmO::Client::run()
 	{
 	MessageCtrl msg;
@@ -235,12 +235,16 @@ int SyZmO::Client::run()
 					MessageCtrl::ServerSetupSetResponse* msg_in
 						=(MessageCtrl::ServerSetupSetResponse*)msg.data;
 					running=m_handler.serverSetupSet(*this,source,*msg_in);
+					m_params.port_in=msg_in->setup.port_out;
+					m_params.port_out=msg_in->setup.port_in;
 					if(running)
-						{return 1;}
+						{return RUN_STATUS_CONTINUE;}
+					else
+						{return RUN_STATUS_EXIT;}
 					}
 					break;
 				}
 			}
 		}
-	return 0;
+	return RUN_STATUS_EXIT;
 	}

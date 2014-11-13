@@ -253,7 +253,6 @@ void SyZmO::Server::setupGetSend(const char* client)
 
 void SyZmO::Server::setupSet(const char* client,const ServerSetup& setup)
 	{
-	store(setup);
 	m_log.entryWrite(client,"Setup set request");
 	MessageCtrl::ServerSetupSetResponse resp;
 	resp.setup=setup;

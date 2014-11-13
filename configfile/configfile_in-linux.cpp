@@ -26,6 +26,21 @@ SyZmO::ConfigFileIn::ConfigFileIn(const char* filename)
 		{throw ExceptionMissing(__FILE__,__LINE__);}
 	}
 
+bool SyZmO::ConfigFileIn::exists(const char* filename)
+	{
+	struct passwd* pw = getpwuid(getuid());
+	const char* homedir = pw->pw_dir;
+	if(homedir==nullptr)
+		{throw ExceptionMissing(__FILE__,__LINE__);}
+	Buffer temp(256,homedir);
+	temp.append('/').append(filename).terminate();
+	FILE* src=fopen(temp.begin(),"r");
+	if(src==nullptr)
+		{return 0;}
+	fclose(src);
+	return 1;
+	}
+
 bool SyZmO::ConfigFileIn::paramGet(Buffer& key,Buffer& value)
 	{
 	if(feof((FILE*)src))

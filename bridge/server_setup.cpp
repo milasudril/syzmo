@@ -10,12 +10,17 @@ target[name[server_setup.o] type[object]]
 #include <cstdlib>
 #include <cstdio>
 
-void SyZmO::load(ServerSetup& params)
+bool SyZmO::load(ServerSetup& params)
 	{
-	ConfigFileIn config("syzmo_config_server.txt");
-	load(config,params);
+	if(ConfigFileIn::exists("syzmo_config_server.txt"))
+		{
+		ConfigFileIn config("syzmo_config_server.txt");
+		load(config,params);
+		return 1;
+		}
+	return 0;
 	}
-	
+
 void SyZmO::store(const ServerSetup& params)
 	{
 	ConfigFileOut config("syzmo_config_server.txt");
@@ -29,7 +34,7 @@ void SyZmO::store(ParamWriter& writer,const ServerSetup& params)
 	writer.paramSet("port_in",num);
 	sprintf(num,"%u",params.port_out);
 	writer.paramSet("port_out",num);
-	
+
 	if(params.flags&ServerSetup::STARTUP_BROADCAST)
 		{writer.paramSet("startup_broadcast","yes");}
 	else

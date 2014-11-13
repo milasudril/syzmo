@@ -1,12 +1,16 @@
 ' This script copies files from the shared folder "C:\syzmo" to appropriate
 ' places.
+'
+' To get the www interface working in Personal Web Server:
+'  * Make sure that <Home> has the permissions "read", "execute", and "script".
+'  * Also set the default document to "syzmo_client_cgi.exe?view=info".
+
+On Error Resume Next
 
 dim filesys
 set filesys=CreateObject("Scripting.FileSystemObject")
 If filesys.FolderExists("C:\syzmo\client_cgi") Then
-' This will copy CGI files to the wwwroot directory. In Personal Web Server:
-' Make sure that <Home> has the permissions "read", "execute", and "script".
-' Also set the default document to "syzmo_server_client.exe?view=info".
+' This will copy CGI files to the wwwroot directory.
 	filesys.CopyFolder "C:\syzmo\client_cgi", "C:\Inetpub\wwwroot", true
 End If
 
