@@ -4,6 +4,7 @@ target[name[connection.o] type[object]]
 
 #include "connection.h"
 #include "server.h"
+#include <cstring>
 
 SyZmO::Connection::Connection(const char* client,uint32_t device_id):
 	midi_out(device_id)

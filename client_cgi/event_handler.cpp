@@ -64,7 +64,7 @@ bool SyZmO::ClientCgi::EventHandler::deviceName(Client& client
 
 bool SyZmO::ClientCgi::EventHandler::connectionOpened(Client& client
 	,const char* server,const MessageCtrl::ConnectionOpenResponsePrivate& message)
-	{return 1;}
+	{return 0;}
 
 bool SyZmO::ClientCgi::EventHandler::connectionOpened(Client& client
 	,const char* server,const MessageCtrl::ConnectionOpenResponsePublic& message)
@@ -72,7 +72,7 @@ bool SyZmO::ClientCgi::EventHandler::connectionOpened(Client& client
 
 bool SyZmO::ClientCgi::EventHandler::connectionClosed(Client& client
 	,const char* server,const MessageCtrl::ConnectionCloseResponsePrivate& message)
-	{return 1;}
+	{return 0;}
 
 bool SyZmO::ClientCgi::EventHandler::connectionClosed(Client& client
 	,const char* server,const MessageCtrl::ConnectionCloseResponsePublic& message)

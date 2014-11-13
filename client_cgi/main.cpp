@@ -157,6 +157,9 @@ int main()
 			case SyZmO::ClientCgi::Parameters::ACTION_TEST:
 				{
 				SyZmO::uint32_t device_id=params_cgi.device;
+				client.connectionOpenRequest(params.server_ip,device_id);
+				client.run();
+
 				SyZmO::MessageMidi msg;
 				msg.bytes[0]=0xc0;
 				msg.bytes[1]=81;
@@ -175,6 +178,8 @@ int main()
 				msg.bytes[1]=63;
 				msg.bytes[2]=127;
 				client.messageMidiSend(params.server_ip,device_id,msg);
+				client.connectionCloseRequest(params.server_ip,device_id);
+				client.run();
 
 				printf("HTTP 1.1/301 Moved Permanently\r\n"
 					"Location: http://%s\r\n\r\n",getenv("HTTP_HOST"));

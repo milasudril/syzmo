@@ -8,7 +8,6 @@ dependency[connection.o]
 
 #include "midi_out.h"
 #include "../bridge/socket_datagram.h"
-#include <cstring>
 
 namespace SyZmO
 	{
@@ -22,7 +21,7 @@ namespace SyZmO
 			bool clientMatch(const char* client) const;
 			void messageSend(const char* client,MessageMidi msg)
 				{
-				if(clientMatch(client) || strcmp(client,"127.0.0.1")==0)
+				if(clientMatch(client))
 					{midi_out.messageSend(msg);}
 				}
 
