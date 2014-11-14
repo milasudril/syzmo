@@ -9,6 +9,7 @@ target[name[../syzmo_client_cgi] type[application] ]
 #include "querystring.h"
 
 #include "../client/client.h"
+#include "../logfile/logfile_in.h"
 #include "../bridge/server_setup.h"
 #include "../bridge/message_midi.h"
 #include "../buffer.h"
@@ -27,7 +28,7 @@ class TemplateKeywordProcessor:
 		TemplateKeywordProcessor(SyZmO::Client& client
 			,SyZmO::ClientCgi::EventHandler& eh
 			,SyZmO::ClientCgi::Parameters& params):
-			m_client(client),m_eh(eh),m_params(params)
+			m_client(client),m_eh(eh),m_params(params),logfile(NULL)
 			{}
 
 		void keywordProcess(const char* word)
@@ -64,6 +65,40 @@ class TemplateKeywordProcessor:
 				m_client.serverSetupGetRequest("127.0.0.1");
 				m_client.run();
 				}
+		/*	else
+			if(strcmp(word,"logfile_aquire")==0)
+				{
+				if(logfile!=NULL)
+					{delete logfile;}
+				logfile=new SyZmO::LogfileIn("syzmo_log_server");
+				}
+			else
+			if(strcmp(word,"logfile_release")==0)
+				{
+				if(logfile!=NULL)
+					{delete logfile;}
+				logfile=NULL;
+				}
+			else
+			if(strcmp(word,"page_prev")==0)
+				{
+				if(m_params.page>0)
+					{printf("%u",m_params.page-1);}
+				else
+					{printf("%u",0);}
+				}
+			else
+			if(strcmp(word,"page_next")==0)
+				{
+				printf("<p class=\"error\">Unimplemented keyword: <code>%s</code></p>"
+					,word);
+				}
+			else
+			if(strcmp(word,"page_last")==0)
+				{
+				printf("<p class=\"error\">Unimplemented keyword: <code>%s</code></p>"
+					,word);
+				}*/
 			else
 				{
 				printf("<p class=\"error\">Unknown keyword: <code>%s</code></p>"
@@ -75,6 +110,7 @@ class TemplateKeywordProcessor:
 		SyZmO::Client& m_client;
 		SyZmO::ClientCgi::EventHandler& m_eh;
 		SyZmO::ClientCgi::Parameters& m_params;
+		SyZmO::LogfileIn* logfile;
 	};
 
 int main()
@@ -106,8 +142,7 @@ int main()
 			}
 
 		SyZmO::ClientCgi::Parameters params_cgi;
-		params_cgi.record_begin=0;
-		params_cgi.record_end=128;
+		params_cgi.page=0;
 		params_cgi.action=SyZmO::ClientCgi::Parameters::ACTION_NORMAL;
 		SyZmO::ClientCgi::load(params_cgi);
 

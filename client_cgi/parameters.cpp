@@ -18,22 +18,14 @@ void SyZmO::ClientCgi::load(Parameters& params)
 			{
 			params.view.clear();
 			params.view.append(value.begin()).append(".html");
+			params.view.terminate();
 			}
 		else
-		if(strcmp(key.begin(),"record_begin")==0)
-			{
-			params.record_begin=atol(value.begin());
-			}
-		else
-		if(strcmp(key.begin(),"record_end")==0)
-			{
-			params.record_end=atol(value.begin());
-			}
+		if(strcmp(key.begin(),"page")==0)
+			{params.page=atol(value.begin());}
 		else
 		if(strcmp(key.begin(),"device")==0)
-			{
-			params.device=atol(value.begin());
-			}
+			{params.device=atol(value.begin());}
 		else
 		if(strcmp(key.begin(),"action")==0)
 			{

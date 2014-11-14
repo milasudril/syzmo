@@ -17,8 +17,7 @@ namespace SyZmO
 			Parameters():view(16){}
 
 			Buffer view;
-			size_t record_begin;
-			size_t record_end;
+			size_t page;
 			size_t device;
 
 			size_t action;

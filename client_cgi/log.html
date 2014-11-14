@@ -19,27 +19,21 @@
 </ul>
 
 <div id="content">
-<h2>Server actions</h2>
-<h3>System setup</h3>
-<form action="$!SCRIPT_NAME" method="get">
-<input type="hidden" name="action" value="Setup">
-<input type="hidden" name="view" value="info">
-$input_begin
-$setup_get
-$input_end
-<p>
-<input type="submit" value="Apply">
-<input type="reset" value="Reset">
+<h2>Logfile</h2>
+$logfile_aquire
+<table class="navpane">
+<tr>
+<th><a href="$!SCRIPT_NAME?view=log&amp;page=0">First</a></th>
+<th><a href="$!SCRIPT_NAME?view=log&amp;page=$page_prev">Previous</a></th>
+<th><a  href="$!SCRIPT_NAME?view=log&amp;page=$page_next">Next</a></th>
+<th><a  href="$!SCRIPT_NAME?view=log&amp;page=$page_last">Last</a></th>
+</tr>
+</table>
+$logfile_print
+<p id="content_footer" class="navpane">
 </p>
-</form>
-
-<h3>Server control</h3>
-<form action="$!SCRIPT_NAME" method="get">
-<p>
-<input type="submit" name="action" value="Shutdown"> 
-<input type="submit" name="action" value="Reboot">
-</p>
-</form>
+$logfile_release
 </div>
+
 </body>
 </html>

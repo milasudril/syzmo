@@ -55,12 +55,12 @@ Installing the system
 ---------------------
 *This section assumes that the server is running on a Windows desktop*
 
- 1. Create a network share on the server machine. In this instruction, the directory `C:\syzmo` will be used as network share `\\syzmo_server\syzmo`.
- 2. Run `make variables` to get a list of variables that affects the installation process.
- 3. Set the environment variables listed appropriately. If you wand to upgrade the system, it is a good idea to add these to your `.profile` or `.bashrc` file.
- 4. Run `make install` from this directory. The makefile will download a binary distribution of `MinGW 3.4.5`, that will be used to compile the server code.
- 5. When the script asks for login information, type the username, and password. If there is no password just hit ENTER to skip to the next question.
- 6. On the server machine, create a shortcut to `C:\syzmo\syzmo_upgrade.vbs` in the `Autostart` folder in the "Start" menu. For more information, you may have a look at this file in `notepad`.
+ 1. *On the host:* Create a network share on the host. In this guide, the directory `C:\syzmo` will be used as network share `\\syzmo_server\syzmo`.
+ 2. *On the client:* Run `make variables` to get a list of variables that affects the installation process.
+ 3. *On the client:*Set the listed environment variables appropriately. If you wand to upgrade the system and the default value is incorrect, it is a good idea to add these to your `.profile` or `.bashrc` file.
+ 4. *On the client:* Run `make install` from this directory. The makefile will download a binary distribution of `MinGW 3.4.5`, that will be used to compile the server code.
+ 5. *On the client:* When the script asks for login information, type the username, and password. If there is no password just hit ENTER to skip to the next question.
+ 6. *On the host:* Create a shortcut to `C:\syzmo\syzmo_upgrade.vbs` in the `Autostart` folder in the "Start" menu. For more information, you may have a look at this file in `notepad`.
 
 Configuring ports
 -----------------
