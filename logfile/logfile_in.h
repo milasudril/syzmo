@@ -19,20 +19,20 @@ namespace SyZmO
 					virtual void tableBegin()=0;
 					virtual void tableEnd()=0;
 					virtual void rowBegin()=0;
-					virtual void rowEnd();
+					virtual void rowEnd()=0;
 					virtual void fieldPrint(const char* value)=0;
+					virtual void fieldHeaderPrint(const char* value)=0;
 				};
-			
-			LogfileIn(const char* filename,FieldPrinter& printer);
+
+			LogfileIn(const char* filename);
 			~LogfileIn();
-			
-			bool recordGet(size_t index);
-			
+
+			void recordGet(size_t index,FieldPrinter& printer);
+
 			size_t recordsCount() const
 				{return record_count;}
-			
+
 		private:
-			FieldPrinter& m_printer;
 			size_t* record_index;
 			size_t record_count;
 			void* src;

@@ -26,6 +26,7 @@ lcd ..
 put __wand_targets_rel_win/syzmo_client_cgi.exe syzmo_client_cgi.exe
 cd ..
 
+mkdir server
 cd server
 put __wand_targets_rel_win/syzmo_server.exe syzmo_server.exe
 logoff

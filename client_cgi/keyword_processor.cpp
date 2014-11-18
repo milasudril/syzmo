@@ -4,6 +4,7 @@ target[name[keyword_processor.o] type[object]]
 
 #include "keyword_processor.h"
 #include "event_handler.h"
+#include "parameters.h"
 #include "../client/client.h"
 #include <cstdio>
 #include <cstring>
@@ -48,7 +49,7 @@ void SyZmO::ClientCgi::KeywordProcessor::keywordProcess(const char* word)
 		m_client.serverSetupGetRequest("127.0.0.1");
 		m_client.run();
 		}
-/*	else
+	else
 	if(strcmp(word,"logfile_aquire")==0)
 		{
 		if(logfile!=NULL)
@@ -63,6 +64,35 @@ void SyZmO::ClientCgi::KeywordProcessor::keywordProcess(const char* word)
 		logfile=NULL;
 		}
 	else
+	if(strcmp(word,"logfile_print")==0)
+		{
+		log_fieldprinter.tableBegin();
+		log_fieldprinter.rowBegin();
+		log_fieldprinter.fieldHeaderPrint("#");
+		log_fieldprinter.fieldHeaderPrint("Time");
+		log_fieldprinter.fieldHeaderPrint("Event source");
+		log_fieldprinter.fieldHeaderPrint("Message");
+		log_fieldprinter.rowEnd();
+		size_t n_pages=logfile->recordsCount()/64 + 1;
+		if(m_params.page>=n_pages)
+			{m_params.page=n_pages-1;}
+		size_t index_start=logfile->recordsCount() - m_params.page*64;
+		size_t i=index_start;
+		while(i!=0)
+			{
+			log_fieldprinter.rowBegin();
+			--i;
+			char buffer[16];
+			sprintf(buffer,"%u",i);
+			log_fieldprinter.fieldPrint(buffer);
+			logfile->recordGet(i,log_fieldprinter);
+			log_fieldprinter.rowEnd();
+			if(index_start-i==64)
+				{break;}
+			}
+		log_fieldprinter.tableEnd();
+		}
+	else
 	if(strcmp(word,"page_prev")==0)
 		{
 		if(m_params.page>0)
@@ -73,15 +103,18 @@ void SyZmO::ClientCgi::KeywordProcessor::keywordProcess(const char* word)
 	else
 	if(strcmp(word,"page_next")==0)
 		{
-		printf("<p class=\"error\">Unimplemented keyword: <code>%s</code></p>"
-			,word);
+		size_t n_pages=logfile->recordsCount()/64 + 1;
+		if(m_params.page+1<n_pages)
+			{printf("%u",m_params.page+1);}
+		else
+			{printf("%u",m_params.page);}
 		}
 	else
 	if(strcmp(word,"page_last")==0)
 		{
-		printf("<p class=\"error\">Unimplemented keyword: <code>%s</code></p>"
-			,word);
-		}*/
+		size_t n_pages=logfile->recordsCount()/64 + 1;
+		printf("%u",n_pages-1);
+		}
 	else
 		{
 		printf("Unknown keyword: %s",word);

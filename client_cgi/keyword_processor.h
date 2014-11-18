@@ -7,6 +7,7 @@ dependency[keyword_processor.o]
 #define SYZMO_CLIENTCGI_KEYWORDPROCESSOR_H
 
 #include "template_reader.h"
+#include "log_fieldprinter.h"
 
 namespace SyZmO
 	{
@@ -31,6 +32,7 @@ namespace SyZmO
 				ClientCgi::EventHandler& m_eh;
 				ClientCgi::Parameters& m_params;
 				LogfileIn* logfile;
+				LogFieldprinter log_fieldprinter;
 			};
 		}
 	}

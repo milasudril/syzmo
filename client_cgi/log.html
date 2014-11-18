@@ -21,7 +21,7 @@
 <div id="content">
 <h2>Logfile</h2>
 $logfile_aquire
-<table class="navpane">
+<table class="navpane_horizontal">
 <tr>
 <th><a href="$!SCRIPT_NAME?view=log&amp;page=0">First</a></th>
 <th><a href="$!SCRIPT_NAME?view=log&amp;page=$page_prev">Previous</a></th>
@@ -29,9 +29,18 @@ $logfile_aquire
 <th><a  href="$!SCRIPT_NAME?view=log&amp;page=$page_last">Last</a></th>
 </tr>
 </table>
+
 $logfile_print
-<p id="content_footer" class="navpane">
-</p>
+
+<table class="navpane_horizontal">
+<tr>
+<th><a href="$!SCRIPT_NAME?view=log&amp;page=0">First</a></th>
+<th><a href="$!SCRIPT_NAME?view=log&amp;page=$page_prev">Previous</a></th>
+<th><a  href="$!SCRIPT_NAME?view=log&amp;page=$page_next">Next</a></th>
+<th><a  href="$!SCRIPT_NAME?view=log&amp;page=$page_last">Last</a></th>
+</tr>
+</table>
+
 $logfile_release
 </div>
 
