@@ -41,6 +41,8 @@ namespace SyZmO
 				,const MessageCtrl::ServerSetupSetResponse& message)=0;
 			virtual bool serverTest(Client& client,const char* server
 				,const MessageCtrl::ServerTestResponse& message)=0;
+			virtual bool serverLogCleared(Client& client,const char* server
+				,const MessageCtrl::ServerLogClearResponse& message)=0;
 
 
 			virtual bool serverStartup(Client& client,const char* server)=0;

@@ -11,8 +11,8 @@
 		box-shadow: 0px 0px 2px 2px rgb(0,32,64)
 		}
 	p,td,h1,h2,h3,th,li{color:rgb(170,170,170);}
-	h1,h2,h3{color:rgb(170,170,255)}
-	td,th{border-color:rgb(85,85,85);}
+	h1,h2,h3,th,h4{color:rgb(170,170,255)}
+	td{border-color:rgb(85,85,85);}
 	a{color:rgb(255,192,0);}
 	li:before{color: rgb(0,0,255);}
 	input{background-color:rgb(64,0,128);color:rgb(170,170,255);}

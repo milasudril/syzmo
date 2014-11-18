@@ -36,6 +36,7 @@ namespace SyZmO
 			void setupGetSend(const char* client);
 			void setupSet(const char* client,const ServerSetup& setup);
 			void deviceTest(const char* client, uint32_t dev_id);
+			void logClear(const char* client);
 
 
 			void connectionsIsAliveRequest();

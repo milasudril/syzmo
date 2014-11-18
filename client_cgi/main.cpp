@@ -73,7 +73,8 @@ int main()
 				client.serverSetupSetRequest(params.server_ip,server_setup);
 				client.run();
 				printf("HTTP 1.1/301 Moved Permanently\r\n"
-					"Location: http://%s\r\n\r\n",getenv("HTTP_HOST"));
+					"Location: http://%s%s?view=actions\r\n\r\n"
+					,getenv("HTTP_HOST"),getenv("SCRIPT_NAME"));
 				}
 				return 0;
 
@@ -103,6 +104,16 @@ int main()
 
 				printf("HTTP 1.1/301 Moved Permanently\r\n"
 					"Location: http://%s\r\n\r\n",getenv("HTTP_HOST"));
+				}
+				return 0;
+
+			case SyZmO::ClientCgi::Parameters::ACTION_LOGFILE_CLEAR:
+				{
+				client.serverLogClearRequest(params.server_ip);
+				client.run();
+				printf("HTTP 1.1/301 Moved Permanently\r\n"
+					"Location: http://%s%s?view=actions\r\n\r\n"
+					,getenv("HTTP_HOST"),getenv("SCRIPT_NAME"));
 				}
 				return 0;
 

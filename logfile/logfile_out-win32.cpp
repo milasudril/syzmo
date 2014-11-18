@@ -11,7 +11,8 @@ target[name[logfile_out.o] type[object] platform[;Windows]]
 #include <shlobj.h>
 #include <cstdio>
 
-SyZmO::LogfileOut::LogfileOut(const char* filename)
+SyZmO::LogfileOut::LogfileOut(const char* filename):
+	filename_log(MAX_PATH),filename_index(MAX_PATH)
 	{
 	char homedir[MAX_PATH];
 	if(!SHGetSpecialFolderPath(NULL,homedir,CSIDL_APPDATA,TRUE))
@@ -19,17 +20,17 @@ SyZmO::LogfileOut::LogfileOut(const char* filename)
 	homedir[MAX_PATH-1]=0;
 
 		{
-		Buffer temp(MAX_PATH,homedir);
-		temp.append('\\').append(filename).append(".txt").terminate();
-		dest=fopen(temp.begin(),"ab");
+		filename_log.append(homedir).append('\\').append(filename)
+			.append(".txt").terminate();
+		dest=fopen(filename_log.begin(),"ab");
 		if(dest==NULL)
 			{throw ExceptionMissing(__FILE__,__LINE__);}
 		}
 
 		{
-		Buffer temp(MAX_PATH,homedir);
-		temp.append('\\').append(filename).append(".idx").terminate();
-		dest_index=fopen(temp.begin(),"ab");
+		filename_index.append(homedir).append('\\').append(filename)
+			.append(".idx").terminate();
+		dest_index=fopen(filename_index.begin(),"ab");
 		if(dest_index==NULL)
 			{
 			fclose((FILE*)dest);
@@ -64,4 +65,20 @@ void SyZmO::LogfileOut::entryWrite(const char* address,const char* message,...)
 
 	fwrite(&l_tot, sizeof(l_tot),1,(FILE*)dest_index);
 	fflush((FILE*)dest_index);
+	}
+
+void SyZmO::LogfileOut::clear()
+	{
+	fclose((FILE*)dest_index);
+	fclose((FILE*)dest);
+
+	dest=fopen(filename_log.begin(),"wb");
+	if(dest==NULL)
+		{throw ExceptionMissing(__FILE__,__LINE__);}
+	dest_index=fopen(filename_index.begin(),"wb");
+	if(dest_index==NULL)
+		{
+		fclose((FILE*)dest);
+		throw ExceptionMissing(__FILE__,__LINE__);
+		}
 	}

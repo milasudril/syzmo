@@ -6,6 +6,8 @@ dependency[logfile_out.o]
 #ifndef SYZMO_LOGFILEOUT_H
 #define SYZMO_LOGFILEOUT_H
 
+#include "../buffer.h"
+
 namespace SyZmO
 	{
 	class LogfileOut
@@ -14,10 +16,14 @@ namespace SyZmO
 			LogfileOut(const char* filename);
 			~LogfileOut();
 			void entryWrite(const char* address,const char* message,...);
+			void clear();
 
 		private:
 			void* dest;
 			void* dest_index;
+
+			Buffer filename_log;
+			Buffer filename_index;
 		};
 	}
 

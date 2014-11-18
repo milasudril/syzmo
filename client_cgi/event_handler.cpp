@@ -135,3 +135,7 @@ bool SyZmO::ClientCgi::EventHandler::serverShutdown(Client& client
 bool SyZmO::ClientCgi::EventHandler::serverTest(Client& client,const char* server
 	,const MessageCtrl::ServerTestResponse& message)
 	{return 0;}
+
+bool SyZmO::ClientCgi::EventHandler::serverLogCleared(Client& client
+	,const char* server,const MessageCtrl::ServerLogClearResponse& message)
+	{return 0;}

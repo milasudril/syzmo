@@ -43,6 +43,11 @@ void SyZmO::ClientCgi::load(Parameters& params)
 			else
 			if(strcmp(value.begin(),"Test")==0)
 				{params.action=Parameters::ACTION_TEST;}
+			else
+			if(strcmp(value.begin(),"Clear+logfile")==0 ||
+				strcmp(value.begin(),"Clear%20logfile")==0)
+				{params.action=Parameters::ACTION_LOGFILE_CLEAR;}
+
 			}
 		}
 	}

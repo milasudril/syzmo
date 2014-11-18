@@ -26,6 +26,7 @@ namespace SyZmO
 			static const size_t ACTION_SHUTDOWN=2;
 			static const size_t ACTION_REBOOT=3;
 			static const size_t ACTION_TEST=4;
+			static const size_t ACTION_LOGFILE_CLEAR=5;
 			};
 
 		void load(Parameters& params);

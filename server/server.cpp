@@ -344,7 +344,7 @@ void SyZmO::Server::deviceTest(const char* client, uint32_t dev_id)
 	msg.bytes[0]=0x90; msg.bytes[1]=69; msg.bytes[2]=127;
 	connections[dev_id]->messageSend(client,msg);
 
-	Sleep(500);
+	Sleep(300);
 
 	msg.bytes[0]=0x80; msg.bytes[1]=69; msg.bytes[2]=127;
 	connections[dev_id]->messageSend(client,msg);
@@ -360,6 +360,13 @@ void SyZmO::Server::deviceTest(const char* client, uint32_t dev_id)
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
 
+void SyZmO::Server::logClear(const char* client)
+	{
+	m_log.clear();
+	MessageCtrl::ServerLogClearResponse resp;
+	MessageCtrl msg_ret(resp);
+	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+	}
 
 void SyZmO::Server::connectionsIsAlive(const char* client)
 	{
@@ -473,6 +480,10 @@ int SyZmO::Server::run()
 						=(const MessageCtrl::ServerTestRequest*)msg.data;
 					deviceTest(source,msg_in->device_id);
 					}
+					break;
+
+				case MessageCtrl::ServerLogClearRequest::ID:
+					logClear(source);
 					break;
 				}
 			}

@@ -46,8 +46,12 @@ namespace SyZmO
 				bool serverTest(Client& client,const char* server
 					,const MessageCtrl::ServerTestResponse& message);
 
+				bool serverLogCleared(Client& client,const char* server
+					,const MessageCtrl::ServerLogClearResponse& message);
+
 				bool serverStartup(Client& client,const char* server);
 				bool serverShutdown(Client& client,const char* server);
+
 
 			private:
 				MidiRouter& m_router;

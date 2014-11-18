@@ -41,6 +41,7 @@ namespace SyZmO
 			void serverShutdownRequest(const char* server);
 			void serverRebootRequest(const char* server);
 			void serverTestRequest(const char* server,uint32_t device_id);
+			void serverLogClearRequest(const char* server);
 
 			static const int RUN_STATUS_CONTINUE=0;
 			static const int RUN_STATUS_EXIT=1;

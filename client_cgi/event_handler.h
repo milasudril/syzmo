@@ -45,6 +45,8 @@ namespace SyZmO
 					,const MessageCtrl::ServerSetupSetResponse& message);
 				bool serverTest(Client& client,const char* server
 					,const MessageCtrl::ServerTestResponse& message);
+				bool serverLogCleared(Client& client,const char* server
+					,const MessageCtrl::ServerLogClearResponse& message);
 
 
 

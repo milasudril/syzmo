@@ -124,7 +124,12 @@ void SyZmO::Client::serverTestRequest(const char* server,uint32_t device_id)
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
 
-
+void SyZmO::Client::serverLogClearRequest(const char* server)
+	{
+	MessageCtrl::ServerLogClearRequest req;
+	MessageCtrl msg_out(req);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
 
 int SyZmO::Client::run()
 	{
@@ -137,7 +142,7 @@ int SyZmO::Client::run()
 		memset(&msg,0,sizeof(msg));
 		if(socket_in.receive(&msg,sizeof(msg),source)!=sizeof(msg))
 			{continue;}
-			
+
 		if(socket_in.recvTimeout())
 			{
 			memset(&msg,0,sizeof(msg));
@@ -259,6 +264,14 @@ int SyZmO::Client::run()
 					MessageCtrl::ServerTestResponse* msg_in
 						=(MessageCtrl::ServerTestResponse*)msg.data;
 					running=m_handler.serverTest(*this,source,*msg_in);
+					}
+					break;
+
+				case MessageCtrl::ServerLogClearResponse::ID:
+					{
+					MessageCtrl::ServerLogClearResponse* msg_in
+						=(MessageCtrl::ServerLogClearResponse*)msg.data;
+					running=m_handler.serverLogCleared(*this,source,*msg_in);
 					}
 					break;
 				}

@@ -121,3 +121,9 @@ bool SyZmO::ClientStudio::EventHandler::serverTest(Client& client,const char* se
 	{
 	return 1;
 	}
+
+bool SyZmO::ClientStudio::EventHandler::serverLogCleared(Client& client
+	,const char* server,const MessageCtrl::ServerLogClearResponse& message)
+	{
+	return 1;
+	}
