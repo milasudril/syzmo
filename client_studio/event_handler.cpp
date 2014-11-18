@@ -115,3 +115,9 @@ bool SyZmO::ClientStudio::EventHandler::serverSetupSet(Client& client,const char
 	printf("Setup has been changed\n");
 	return 1;
 	}
+
+bool SyZmO::ClientStudio::EventHandler::serverTest(Client& client,const char* server
+	,const MessageCtrl::ServerTestResponse& message)
+	{
+	return 1;
+	}

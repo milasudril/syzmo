@@ -32,7 +32,7 @@ bool SyZmO::ClientCgi::EventHandler::deviceCount(Client& client
 	,const char* server,const MessageCtrl::DeviceCountResponse& message)
 	{
 	printf("<table>\n"
-		"<tr><th>Id</th><th>Name</th><th>Status</th></tr>\n");
+		"<tr><th>Id</th><th>Name</th><th>Status</th><th>Test</th></tr>\n");
 	dev_count=message.n_devs;
 	for(size_t k=0;k<message.n_devs;++k)
 		{client.deviceNameRequest(server,k);}
@@ -48,12 +48,14 @@ bool SyZmO::ClientCgi::EventHandler::deviceName(Client& client
 	,const char* server,const MessageCtrl::DeviceNameResponse& message)
 	{
 	printf("<tr><td class=\"number\">%u</td>"
-		"<td><a href=\"http://%s%s?action=Test&device=%u\">%s</a></td>"
-		"<td>%s</td></tr>\n"
+		"<td>%s</td>"
+		"<td>%s</td>"
+		"<td><a href=\"http://%s%s?action=Test&device=%u\">♩</a></td></tr>\n"
 		,message.device_id
+		,message.name,dev_status[std::min(message.status,3u)]
 		,getenv("HTTP_HOST"),getenv("SCRIPT_NAME")
 		,message.device_id
-		,message.name,dev_status[std::min(message.status,3u)]);
+		);
 	if(message.device_id==dev_count-1)
 		{
 		printf("</table>\n");
@@ -129,3 +131,7 @@ bool SyZmO::ClientCgi::EventHandler::serverStartup(Client& client
 bool SyZmO::ClientCgi::EventHandler::serverShutdown(Client& client
 	,const char* server)
 	{return 1;}
+
+bool SyZmO::ClientCgi::EventHandler::serverTest(Client& client,const char* server
+	,const MessageCtrl::ServerTestResponse& message)
+	{return 0;}

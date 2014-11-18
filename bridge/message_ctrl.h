@@ -172,6 +172,34 @@ namespace SyZmO
 		struct ServerRebootRequest
 			{static const uint32_t ID=22;};
 
+		struct ServerTestRequest
+			{
+			static const uint32_t ID=23;
+			uint32_t device_id;
+			};
+
+		struct ServerTestResponse
+			{
+			static const uint32_t ID=24;
+
+			static const uint32_t NAME_LENGTH=40;
+			char name[NAME_LENGTH];
+
+			uint32_t device_id;
+			uint32_t status;
+			static const uint32_t STATUS_OK=0;
+			static const uint32_t STATUS_BUSY=1;
+			static const uint32_t STATUS_INVALID=2;
+			static const uint32_t STATUS_ERROR=(uint32_t)-1;
+			};
+
+		struct ServerLogClearRequest
+			{static const uint32_t ID=25;};
+
+		struct ServerLogClearResponse
+			{static const uint32_t ID=26;};
+
+
 		private:
 			void valuesSet(uint32_t length,const void* vals);
 		};

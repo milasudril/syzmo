@@ -19,8 +19,6 @@ target[name[../syzmo_client_cgi] type[application] ]
 #include <cstring>
 #include <cstdlib>
 
-#include <windows.h>
-
 int main()
 	{
 	try
@@ -100,28 +98,7 @@ int main()
 			case SyZmO::ClientCgi::Parameters::ACTION_TEST:
 				{
 				SyZmO::uint32_t device_id=params_cgi.device;
-				client.connectionOpenRequest(params.server_ip,device_id);
-				client.run();
-
-				SyZmO::MessageMidi msg;
-				msg.bytes[0]=0xc0;
-				msg.bytes[1]=81;
-				msg.bytes[2]=0;
-				client.messageMidiSend(params.server_ip,device_id,msg);
-				msg.bytes[0]=0xb0;
-				msg.bytes[1]=7;
-				msg.bytes[2]=127;
-				client.messageMidiSend(params.server_ip,device_id,msg);
-				msg.bytes[0]=0x90;
-				msg.bytes[1]=63;
-				msg.bytes[2]=127;
-				Sleep(500);
-				client.messageMidiSend(params.server_ip,device_id,msg);
-				msg.bytes[0]=0x80;
-				msg.bytes[1]=63;
-				msg.bytes[2]=127;
-				client.messageMidiSend(params.server_ip,device_id,msg);
-				client.connectionCloseRequest(params.server_ip,device_id);
+				client.serverTestRequest(params.server_ip,device_id);
 				client.run();
 
 				printf("HTTP 1.1/301 Moved Permanently\r\n"

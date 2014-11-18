@@ -36,19 +36,21 @@ namespace SyZmO
 					,const MessageCtrl::ConnectionCloseResponsePrivate& message);
 				bool connectionClosed(Client& client,const char* server
 					,const MessageCtrl::ConnectionCloseResponsePublic& message);
-					
+
 				bool serverHostname(Client& client,const char* server
 					,const MessageCtrl::ServerHostnameResponse& message);
 				bool serverSetupGet(Client& client,const char* server
 					,const MessageCtrl::ServerSetupGetResponse& message);
 				bool serverSetupSet(Client& client,const char* server
 					,const MessageCtrl::ServerSetupSetResponse& message);
-				
-					
+				bool serverTest(Client& client,const char* server
+					,const MessageCtrl::ServerTestResponse& message);
+
+
 
 				bool serverStartup(Client& client,const char* server);
 				bool serverShutdown(Client& client,const char* server);
-				
+
 				void cdataBegin()
 					{mode_output|=MODE_OUTPUT_CDATA;}
 				void cdataEnd()

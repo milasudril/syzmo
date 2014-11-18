@@ -116,6 +116,14 @@ void SyZmO::Client::serverRebootRequest(const char* server)
 	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
 	}
 
+void SyZmO::Client::serverTestRequest(const char* server,uint32_t device_id)
+	{
+	MessageCtrl::ServerTestRequest req;
+	req.device_id=device_id;
+	MessageCtrl msg_out(req);
+	socket_out.send(&msg_out,sizeof(msg_out),m_params.port_out,server);
+	}
+
 
 
 int SyZmO::Client::run()
@@ -127,7 +135,9 @@ int SyZmO::Client::run()
 	while(running && !m_stop)
 		{
 		memset(&msg,0,sizeof(msg));
-		socket_in.receive(&msg,sizeof(msg),source);
+		if(socket_in.receive(&msg,sizeof(msg),source)!=sizeof(msg))
+			{continue;}
+			
 		if(socket_in.recvTimeout())
 			{
 			memset(&msg,0,sizeof(msg));
@@ -241,6 +251,14 @@ int SyZmO::Client::run()
 						{return RUN_STATUS_CONTINUE;}
 					else
 						{return RUN_STATUS_EXIT;}
+					}
+					break;
+
+				case MessageCtrl::ServerTestResponse::ID:
+					{
+					MessageCtrl::ServerTestResponse* msg_in
+						=(MessageCtrl::ServerTestResponse*)msg.data;
+					running=m_handler.serverTest(*this,source,*msg_in);
 					}
 					break;
 				}

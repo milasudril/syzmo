@@ -110,7 +110,7 @@ void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 	MessageCtrl::ConnectionOpenResponsePrivate resp;
 	m_log.entryWrite(client,"Connection request for device %u",dev_id);
 	resp.device_id=dev_id;
-	if(dev_id > n_devs)
+	if(dev_id >= n_devs)
 		{
 		resp.status=MessageCtrl::ConnectionOpenResponsePrivate::STATUS_INVALID;
 		MessageCtrl msg_ret(resp);
@@ -119,13 +119,15 @@ void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 		return;
 		}
 
-	MidiOut::deviceNameGet(dev_id,resp.name);
+	MidiOut::deviceNameGet(resp.device_id,resp.name);
 
 	if(connections[dev_id]==NULL)
 		{
 		try
 			{
 			connections[dev_id]=new Connection(client,dev_id);
+			m_log.entryWrite("127.0.0.1","Client is connected to %u [%s]"
+				,dev_id,resp.name);
 			MessageCtrl::ConnectionOpenResponsePublic resp_public;
 			resp_public.device_id=dev_id;
 			MessageCtrl msg_ret(resp_public);
@@ -133,14 +135,15 @@ void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 			socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out
 				,"255.255.255.255");
 			socket_out.broadcastDisable();
-			resp.status=MessageCtrl::ConnectionOpenResponsePrivate::STATUS_OK;
-			m_log.entryWrite("127.0.0.1","Client is connected to %u [%s]"
-				,dev_id,resp.name);
+
 			}
 		catch(const ExceptionMissing& e)
 			{
 			e.print(m_log);
 			resp.status=MessageCtrl::ConnectionOpenResponsePrivate::STATUS_ERROR;
+			MessageCtrl msg_ret(resp);
+			socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+			return;
 			}
 		}
 	else
@@ -150,6 +153,9 @@ void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 			m_log.entryWrite("127.0.0.1","Device %u [%s] is busy"
 				,dev_id,resp.name);
 			resp.status=MessageCtrl::ConnectionOpenResponsePrivate::STATUS_BUSY;
+			MessageCtrl msg_ret(resp);
+			socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+			return;
 			}
 		else
 			{
@@ -157,6 +163,8 @@ void SyZmO::Server::clientConnect(const char* client,uint32_t dev_id)
 				,dev_id,resp.name);
 			}
 		}
+
+	resp.status=MessageCtrl::ConnectionOpenResponsePrivate::STATUS_OK;
 	MessageCtrl msg_ret(resp);
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
@@ -166,13 +174,12 @@ void SyZmO::Server::clientDisconnect(const char* client,uint32_t dev_id)
 	MessageCtrl::ConnectionCloseResponsePrivate resp;
 	m_log.entryWrite(client,"Connection close request for device %u",dev_id);
 	resp.device_id=dev_id;
-	if(dev_id<n_devs)
+	if(dev_id>=n_devs)
 		{
 		resp.status=MessageCtrl::ConnectionCloseResponsePrivate::STATUS_INVALID;
+		m_log.entryWrite("127.0.0.1","Device does not exist");
 		MessageCtrl msg_ret(resp);
 		socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
-		m_log.entryWrite("127.0.0.1","Device does not exist");
-
 		return;
 		}
 
@@ -180,29 +187,33 @@ void SyZmO::Server::clientDisconnect(const char* client,uint32_t dev_id)
 		{
 		resp.status=MessageCtrl::ConnectionCloseResponsePrivate::NOT_CONNECTED;
 		m_log.entryWrite("127.0.0.1","Device is not connected");
+		MessageCtrl msg_ret(resp);
+		socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+		return;
 		}
-	else
+
+	if(!connections[dev_id]->clientMatch(client))
 		{
-		if(!connections[dev_id]->clientMatch(client))
-			{
-			resp.status=MessageCtrl::ConnectionCloseResponsePrivate::NOT_OWNER;
-			m_log.entryWrite("127.0.0.1","Remote address does not match");
-			}
-		else
-			{
-			MessageCtrl::ConnectionCloseResponsePublic resp_public;
-			resp_public.device_id=dev_id;
-			MessageCtrl msg_ret(resp_public);
-			socket_out.broadcastEnable();
-			socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out
-				,"255.255.255.255");
-			socket_out.broadcastDisable();
-			delete connections[dev_id];
-			connections[dev_id]=NULL;
-			resp.status=MessageCtrl::ConnectionCloseResponsePrivate::STATUS_OK;
-			m_log.entryWrite("127.0.0.1","Device disconnected");
-			}
+		resp.status=MessageCtrl::ConnectionCloseResponsePrivate::NOT_OWNER;
+		m_log.entryWrite("127.0.0.1","Remote address does not match");
+		MessageCtrl msg_ret(resp);
+		socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+		return;
 		}
+
+	MessageCtrl::ConnectionCloseResponsePublic resp_public;
+	resp_public.device_id=dev_id;
+		{
+		MessageCtrl msg_ret(resp_public);
+		socket_out.broadcastEnable();
+		socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out
+			,"255.255.255.255");
+		socket_out.broadcastDisable();
+		}
+	delete connections[dev_id];
+	connections[dev_id]=NULL;
+	resp.status=MessageCtrl::ConnectionCloseResponsePrivate::STATUS_OK;
+	m_log.entryWrite("127.0.0.1","Device disconnected");
 	MessageCtrl msg_ret(resp);
 	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
 	}
@@ -270,6 +281,85 @@ void SyZmO::Server::setupSet(const char* client,const ServerSetup& setup)
 	m_params=setup;
 	}
 
+void SyZmO::Server::deviceTest(const char* client, uint32_t dev_id)
+	{
+	MessageCtrl::ServerTestResponse resp;
+	m_log.entryWrite(client,"Testing device %u",dev_id);
+	resp.device_id=dev_id;
+	if(dev_id > n_devs)
+		{
+		resp.status=MessageCtrl::ServerTestResponse::STATUS_INVALID;
+		MessageCtrl msg_ret(resp);
+		socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+		m_log.entryWrite("127.0.0.1","Device does not exist");
+		return;
+		}
+
+	MidiOut::deviceNameGet(resp.device_id,resp.name);
+
+	bool new_is=0;
+	if(connections[dev_id]==NULL)
+		{
+		try
+			{
+			new_is=1;
+			connections[dev_id]=new Connection(client,dev_id);
+			}
+		catch(const ExceptionMissing& e)
+			{
+			e.print(m_log);
+
+			resp.status=MessageCtrl::ServerTestResponse::STATUS_ERROR;
+			MessageCtrl msg_ret(resp);
+			socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+			return;
+			}
+		}
+	else
+		{
+		if(!connections[dev_id]->clientMatch(client))
+			{
+			m_log.entryWrite("127.0.0.1","Device %u [%s] is busy"
+				,dev_id,resp.name);
+
+			resp.status=MessageCtrl::ServerTestResponse::STATUS_BUSY;
+			MessageCtrl msg_ret(resp);
+			socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+			return;
+			}
+		else
+			{
+			m_log.entryWrite("127.0.0.1","Client is already connected to %u [%s]"
+				,dev_id,resp.name);
+			}
+		}
+
+	SyZmO::MessageMidi msg;
+	msg.bytes[0]=0xc0; msg.bytes[1]=81; msg.bytes[2]=0;
+	connections[dev_id]->messageSend(client,msg);
+
+	msg.bytes[0]=0xb0; msg.bytes[1]=7; msg.bytes[2]=127;
+	connections[dev_id]->messageSend(client,msg);
+
+	msg.bytes[0]=0x90; msg.bytes[1]=69; msg.bytes[2]=127;
+	connections[dev_id]->messageSend(client,msg);
+
+	Sleep(500);
+
+	msg.bytes[0]=0x80; msg.bytes[1]=69; msg.bytes[2]=127;
+	connections[dev_id]->messageSend(client,msg);
+
+	if(new_is)
+		{
+		delete connections[dev_id];
+		connections[dev_id]=NULL;
+		}
+
+	resp.status=MessageCtrl::ServerTestResponse::STATUS_OK;
+	MessageCtrl msg_ret(resp);
+	socket_out.send(&msg_ret,sizeof(msg_ret),m_params.port_out,client);
+	}
+
 
 void SyZmO::Server::connectionsIsAlive(const char* client)
 	{
@@ -294,7 +384,8 @@ int SyZmO::Server::run()
 	running=1;
 	while(running)
 		{
-		socket_in.receive(&msg,sizeof(msg),source);
+		if(socket_in.receive(&msg,sizeof(msg),source)!=sizeof(msg))
+			{continue;}
 		uint32_t time_now=timeGetTime();
 		if(socket_in.recvTimeout() || time_now-time_activity >3000)
 			{connectionsIsAliveRequest();}
@@ -375,6 +466,14 @@ int SyZmO::Server::run()
 
 				case MessageCtrl::ServerRebootRequest::ID:
 					return RUN_STATUS_REBOOT;
+
+				case MessageCtrl::ServerTestRequest::ID:
+					{
+					const MessageCtrl::ServerTestRequest* msg_in
+						=(const MessageCtrl::ServerTestRequest*)msg.data;
+					deviceTest(source,msg_in->device_id);
+					}
+					break;
 				}
 			}
 		}

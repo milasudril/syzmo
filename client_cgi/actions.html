@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>SyZmO server @ $cdata_begin $hostname $cdata_end</title>
+<title>SyZmO server @ $cdata_begin $!HTTP_HOST $cdata_end</title>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="margins.css">
 <link rel="stylesheet" type="text/css" href="layout.css">
@@ -27,18 +27,19 @@
 $input_begin
 $setup_get
 $input_end
-<p>
-<input type="submit" value="Apply">
-<input type="reset" value="Reset">
-</p>
+<table class="navpane_horizontal">
+<tr><th><input type="submit" value="Apply"></th>
+<th><input type="reset" value="Reset"></th>
+</table>
 </form>
 
 <h3>Server control</h3>
 <form action="$!SCRIPT_NAME" method="get">
-<p>
-<input type="submit" name="action" value="Shutdown"> 
-<input type="submit" name="action" value="Reboot">
-</p>
+<table class="navpane_horizontal">
+<tr><th><input type="submit" name="action" value="Shutdown"></th>
+<th><input type="submit" name="action" value="Reboot"></th>
+<th><input type="submit" name="action" value="Clear logfile"></th></tr>
+</table>
 </form>
 </div>
 </body>
