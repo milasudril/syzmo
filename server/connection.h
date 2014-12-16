@@ -29,6 +29,9 @@ namespace SyZmO
 
 			void isAlive()
 				{isalive_sent=0;}
+			
+			const char* clientNameGet() const
+				{return m_client;}
 
 		private:
 			char m_client[SocketDatagram::ADDRBUFF_LENGTH];

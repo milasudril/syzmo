@@ -227,6 +227,9 @@ void SyZmO::Server::connectionsIsAliveRequest()
 			{
 			if(!(*ptr)->isAliveRequest(*this))
 				{
+				m_log.entryWrite("127.0.0.1"
+					,"Client %s did not respond in time. Closing connection."
+					,(*ptr)->clientNameGet());
 				delete *ptr;
 				*ptr=NULL;
 				}
