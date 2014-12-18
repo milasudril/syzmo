@@ -12,7 +12,8 @@ target[name[midi_pump.o] type[object] platform[;GNU/Linux]]
 
 SyZmO::ClientStudio::MidiPump::MidiPump(Herbs::LogWriter& writer)
 	:Herbs::Runnable(writer),m_client(nullptr),m_stop(0)
-	{}
+	{
+	}
 
 
 SyZmO::ClientStudio::MidiPump::~MidiPump()
@@ -28,9 +29,7 @@ void SyZmO::ClientStudio::MidiPump::eventPost(const char* server
 	event_next.device_id=device_id;
 	event_next.midi=msg;
 	event_next.delay=delay;
-//	printf("Pushing event %x to fifo\n",event_next.midi.bytes[0]);
 	buffer.push_back(event_next);
-//	data_has.set();
 	}
 
 namespace
@@ -54,20 +53,35 @@ namespace
 
 int SyZmO::ClientStudio::MidiPump::run()
 	{
-	size_t count=0;
 	while(!m_stop)
 		{
 		data_has.wait();
+		Event event_prev;
+		event_prev.server[0]='\0';
+	
 		while(!buffer.empty())
 			{
 			const Event& event_next=buffer.front();
-			sleep(event_next.delay/fs);
-			m_client->messageMidiSend(event_next.server,event_next.device_id
-				,event_next.midi);
+			
+			if(event_next.delay==0
+				&& event_next.device_id==event_prev.device_id
+				&& strcmp(event_prev.server,event_next.server)==0)
+				{events_out.append(event_next.midi);}
+			else
+				{
+				m_client->messageMidiSend(event_prev.server,event_prev.device_id
+					,events_out.begin(),events_out.length());
+				events_out.clear();
+				sleep(event_next.delay/fs);
+				events_out.append(event_next.midi);
+				}
+			event_prev=event_next;
 			buffer.pop_front();
 			}
-
-		++count;
+		m_client->messageMidiSend(event_prev.server,event_prev.device_id
+			,events_out.begin(),events_out.length());
+			
+		events_out.clear();
 		}
 	return STATUS_OK;
 	}

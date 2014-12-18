@@ -11,6 +11,7 @@ dependency[midi_pump.o]
 
 #include <herbs/runnable/runnable.h>
 #include <herbs/eventauto/eventauto.h>
+#include <herbs/array/array.h>
 #include <cstddef>
 #include <deque>
 
@@ -60,6 +61,7 @@ namespace SyZmO
 				Herbs::EventAuto data_has;
 				Client* m_client;
 				bool m_stop;
+				Herbs::Array<MessageMidi> events_out;
 
 			};
 

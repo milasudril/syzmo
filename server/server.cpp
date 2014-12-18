@@ -64,12 +64,19 @@ SyZmO::Server::~Server()
 
 
 void SyZmO::Server::midiMessageSend(const char* client,uint32_t dev_id
-	,MessageMidi msg)
+	,const MessageMidi* msg,size_t message_count)
 	{
 	if(dev_id < n_devs)
 		{
 		if(connections[dev_id]!=NULL)
-			{connections[dev_id]->messageSend(client,msg);}
+			{
+			while(message_count!=0)
+				{
+				connections[dev_id]->messageSend(client,*msg);
+				--message_count;
+				++msg;
+				}				
+			}
 		}
 	}
 
@@ -402,12 +409,17 @@ int SyZmO::Server::run()
 
 		if(msg.validIs())
 			{
-			switch(msg.message_type)
+			switch(msg.header.message_type)
 				{
 				case MessageCtrl::Midi::ID:
 					{
 					const MessageCtrl::Midi* m=(const MessageCtrl::Midi*)msg.data;
-					midiMessageSend(source,m->device_id,m->midi);
+					size_t message_count=
+						std::min((msg.header.message_size-sizeof(m->device_id))
+							/sizeof(MessageMidi)
+							,MessageCtrl::Midi::MESSAGE_COUNT_MAX);
+					
+					midiMessageSend(source,m->device_id,m->midi,message_count);
 					time_activity=timeGetTime();
 					};
 					break;

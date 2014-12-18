@@ -11,34 +11,53 @@ dependency[message_ctrl.o]
 
 namespace SyZmO
 	{
-	/**SyZmO control messages are used for non-MIDI communication between client and
+	/**SyZmO control messages are used for communication between client and
 	server.
 	*/
     struct MessageCtrl
 	    {
 		MessageCtrl(){}
 
+		struct Header
+			{
+			union
+				{
+				char ascii[8];
+				uint64_t value;
+				} magic;           /**<Magic number. Always reads SyZmOmsg.*/
+			uint32_t message_type; /**<Message type identifier.*/
+			
+			/**Number of valid byts in the following message.
+			 This value may be zero in case the information is not needed to
+			 process the message.*/
+			uint32_t message_size; 
+			} header;
+		
 		template<class T>
-		MessageCtrl(const T& message):
-			message_type(T::ID)
-			{valuesSet(sizeof(T),&message);}
+		MessageCtrl(const T& message)
+			{
+			header.message_type=T::ID;
+			valuesSet(sizeof(T),&message);
+			header.message_size=0;
+			}
 
 		bool validIs() const;
 
-		union
-			{
-			char ascii[8];
-			uint64_t value;
-			} magic;           /**<Magic number. Always reads SyZmOmsg.*/
-		uint32_t padding;
-		uint32_t message_type; /**<Message type identifier.*/
-		char data[48];         /**<Message data.*/
+
+		
+		static const unsigned int HEADER_SIZE=sizeof(Header);
+		static const unsigned int DATA_SIZE=128 - HEADER_SIZE;
+		
+		char data[DATA_SIZE];         /**<Message data.*/
 
 		struct Midi
 			{
 			static const uint32_t ID=0;
 			uint32_t device_id;
-			MessageMidi midi;
+			static const unsigned int MESSAGE_COUNT_MAX
+				=(DATA_SIZE-sizeof(uint32_t))/sizeof(MessageMidi);
+				
+			MessageMidi midi[MESSAGE_COUNT_MAX];
 			};
 
 		struct IsAliveRequest
@@ -65,10 +84,10 @@ namespace SyZmO
 		struct DeviceNameResponse
 			{
 			static const uint32_t ID=6;
-			static const uint32_t NAME_LENGTH=40;
-			char name[NAME_LENGTH];
 			uint32_t device_id;
 			uint32_t status;
+			static const uint32_t NAME_LENGTH=DATA_SIZE-2*sizeof(uint32_t);
+			char name[NAME_LENGTH];
 			static const uint32_t STATUS_READY=0;
 			static const uint32_t STATUS_BUSY=1;
 			static const uint32_t STATUS_INVALID=2;
@@ -83,10 +102,10 @@ namespace SyZmO
 		struct ConnectionOpenResponsePrivate
 			{
 			static const uint32_t ID=8;
-			static const uint32_t NAME_LENGTH=40;
-			char name[NAME_LENGTH];
 			uint32_t device_id;
 			uint32_t status;
+			static const uint32_t NAME_LENGTH=DATA_SIZE-2*sizeof(uint32_t);
+			char name[NAME_LENGTH];
 			static const uint32_t STATUS_OK=0;
 			static const uint32_t STATUS_BUSY=1;
 			static const uint32_t STATUS_INVALID=2;
@@ -131,7 +150,7 @@ namespace SyZmO
 		struct ServerHostnameResponse
 			{
 			static const uint32_t ID=14;
-			static const uint32_t HOSTNAME_LENGTH=48;
+			static const uint32_t HOSTNAME_LENGTH=DATA_SIZE;
 			char hostname[HOSTNAME_LENGTH];
 			};
 
@@ -182,11 +201,12 @@ namespace SyZmO
 			{
 			static const uint32_t ID=24;
 
-			static const uint32_t NAME_LENGTH=40;
-			char name[NAME_LENGTH];
-
 			uint32_t device_id;
 			uint32_t status;
+			static const uint32_t NAME_LENGTH=DATA_SIZE-2*sizeof(uint32_t);
+		
+			char name[NAME_LENGTH];
+
 			static const uint32_t STATUS_OK=0;
 			static const uint32_t STATUS_BUSY=1;
 			static const uint32_t STATUS_INVALID=2;

@@ -29,7 +29,8 @@ namespace SyZmO
 			~Client();
 
 			void messageMidiSend(const char* server,uint32_t device_id
-				,MessageMidi msg);
+				,const MessageMidi* msg,size_t message_count);
+			
 			void isAliveRequest(const char* server);
 			void deviceCountRequest(const char* server);
 			void deviceNameRequest(const char* server,uint32_t id);

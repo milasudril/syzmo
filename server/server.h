@@ -25,7 +25,8 @@ namespace SyZmO
 			Server(ServerSetup& params,LogfileOut& logfile);
 			~Server();
 
-			void midiMessageSend(const char* client,uint32_t dev_id,MessageMidi msg);
+			void midiMessageSend(const char* client,uint32_t dev_id
+				,const MessageMidi* msg,size_t message_count);
 			void isAliveRequest(const char* client);
 			void deviceCountSend(const char* client);
 			void deviceNameSend(const char* client,uint32_t dev_id);

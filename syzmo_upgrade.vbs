@@ -21,5 +21,6 @@ End If
 
 dim shell
 set shell = WScript.CreateObject("WScript.Shell")
-' Start the server
-shell.Run "C:\Program\syzmo\syzmo_server.exe", 0, false
+' Start the server. For debugging, it is useful to show any windows opened by
+' the server process.
+shell.Run "C:\Program\syzmo\syzmo_server.exe", 4, false
