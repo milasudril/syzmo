@@ -2,17 +2,11 @@ all: syzmo_client_studio syzmo_client_cgi.exe syzmo_server.exe
 
 .PHONY: syzmo_client_studio syzmo_client_cgi.exe syzmo_server.exe
 
-__mingw:
-	wget http://gdurl.com/RVgH -O __mingw.tar.gz
-	gzip -d __mingw.tar.gz
-	tar -xf __mingw.tar
-	rm __mingw.tar
-
 syzmo_client_studio:
 	wand
 
-syzmo_client_cgi.exe: __mingw
+syzmo_client_cgi.exe:
 	wand 'platforms[target[x86;Windows]]'
 
-syzmo_server.exe: __mingw
+syzmo_server.exe:
 	wand 'platforms[target[x86;Windows]]'

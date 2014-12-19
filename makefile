@@ -6,7 +6,7 @@ VARS_OLD := $(.VARIABLES)
 
 #This url shall refer to a tar.gz file containing the MinGW 3.4.5 binary
 #distribution
-SYZMO_MINGW_URL?=http://gdurl.com/RVgH
+SYZMO_MINGW_URL?=https://googledrive.com/host/0B5Yu7rHDoEpRUjBDOG45cmpXSHM/__mingw.tar.gz
 
 #This is the name of the host that runs the server
 SYZMO_HOST?=syzmo_host
@@ -17,10 +17,16 @@ variables:
 	$(foreach v,                                        \
 	$(filter-out $(VARS_OLD) VARS_OLD,$(.VARIABLES)), \
 	$(info $(v) = $($(v))))
-
-__mingw:
+	
+__mingw.tar.gz: mingw-checksum-tar.txt mingw-checksum-tgz.txt
 	wget $(SYZMO_MINGW_URL) -O __mingw.tar.gz
+	
+__mingw.tar: __mingw.tar.gz mingw-checksum-tgz.txt
+	sha512sum -c mingw-checksum-tgz.txt
 	gzip -d __mingw.tar.gz
+
+__mingw: __mingw.tar mingw-checksum-tar.txt
+	sha512sum -c mingw-checksum-tar.txt
 	tar -xf __mingw.tar
 	rm __mingw.tar
 
